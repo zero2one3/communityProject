@@ -1,0 +1,38 @@
+{{ extend './home/home.html' }}
+
+{{ block 'title' }}
+首页
+{{ /block }}
+
+{{ block 'style' }}
+<style>
+    .content-container{
+        width: 1350px;
+        margin: 17px auto;
+        height: 2000px;
+        background: #fff;
+        border-radius: 10px;
+    }
+    .content-container .items{
+        width: 100%;
+        height: 100%;
+    }
+    .content-container .items .item{
+        height: 50px;
+        border-bottom: 1px solid #e1e1e1;
+    }
+</style>
+{{ /block }}
+
+{{ block 'script' }}
+
+{{ /block }}
+
+{{ block 'content' }}
+<div class="content-container">
+    <div class="items">
+        <div class="item"></div>
+    </div>
+</div>
+{{ /block }}
+

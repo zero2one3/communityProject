@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+    <script src="/node_modules/jquery/dist/jquery.js"></script>
+    <style>
+        body{
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            background: #f8f8f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-box{
+            width: 27%;
+            height: 60%;
+            position: relative;
+        }
+        .title{
+            height: 13%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .title span{
+            font-size: 30px;
+        }
+        .login{
+            height: 70%;
+            border-radius: 7px;
+            border: 1.4px solid #e1e1e1;
+            padding: 20px;
+            background: #fff;
+        }
+        form{
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        form .checkbox{
+            position: relative;
+            margin-top: 20px;
+        }
+        form .forget{
+            position: absolute;
+            right: 0;
+        }
+        form .btn{
+            width: 100%;
+            position: absolute;
+            bottom: 20px;
+            right: 0;
+            left: 0;
+        }
+        .register{
+            width: 100%;
+            height: 12%;
+            position: absolute;
+            bottom: 0;
+            border: 1.4px solid #e1e1e1;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding-left: 10px;
+        }
+        .register a{
+            margin-left: 5px;
+        }
+        .register .gotohome{
+            position: absolute;
+            right: 0;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+
+        <div class="title">
+            <span>用户登录</span>
+        </div>
+
+        <div class="login">
+            <form id="form">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">邮箱</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">密码</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name="psd">
+                </div>
+
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox">  记住我
+                        <a class="forget">忘记密码？</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-success">登录</button>
+            </form>
+        </div>
+
+        <div class="register">
+            <span>还没有账号?</span>
+            <a href="/register">点击注册</a>
+            <a href="/" class="gotohome">首页</a>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            const $form = $('#form')
+            $form.on('submit', function (event) {
+                event.preventDefault()
+                const $formdata = $(this).serialize()
+                $.ajax({
+                    url: '/login',
+                    dataType: 'json',
+                    type: 'post',
+                    data: $formdata,
+                    success: function (data) {
+                        if(data.status === 0) {
+                            window.alert('邮箱或密码填写错误，请重新填写')
+                            window.location.href = '/login'
+                        } else if(data.status === 1) {
+                            window.location.href = '/'
+                        } else if(data.status === 500) {
+                            window.alert('服务器繁忙，请稍后重试')
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>

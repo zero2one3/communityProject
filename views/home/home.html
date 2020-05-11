@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ block 'title' }} {{ /block }}</title>
+    <link href="../../node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <style>
+        body{
+            background: #e1e1e1;
+            padding-top: 50px;
+        }
+    </style>
+    {{ block 'style' }} {{ /block }}
+</head>
+<body>
+    {{ include '../particals/nav.html' }}
+
+    {{ block 'content' }}
+        <div>暂未添加内容</div>
+    {{ /block }}
+
+    {{ include '../particals/bottom.html' }}
+
+    {{ block 'script' }} {{ /block }}
+</body>
+</html>

@@ -1,0 +1,76 @@
+<style>
+    .nav-container{
+        width: 1350px;
+    }
+    #hello{
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 13px;
+    }
+    #hello span:nth-child(2){
+        color: #ff4200;
+    }
+    .nav li{
+        margin-right: 10px;
+    }
+</style>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container nav-container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Lpyexplore</a>
+        </div>
+
+        <div id="navbar">
+
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                {{ if user }}
+                <li id="hello">
+                    <span>你好，</span>
+                    <span>{{ user.name }}</span>
+                </li>
+                <li><a href="#">发起话题</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">更多<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">个人中心</a></li>
+                        <li><a href="/logout">退出登录</a></li>
+                    </ul>
+                </li>
+
+                {{ else }}
+
+                <li><a href="/login">登录</a></li>
+                <li><a href="/register">注册</a></li>
+
+                {{ /if }}
+
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script>
+    $(function () {
+
+        const $dropdown = $('.dropdown')
+        const $dropdown_menu = $('.dropdown-menu')
+        $dropdown.hover(function () {
+            $dropdown_menu.show()
+        }, function () {
+            $dropdown_menu.hide()
+        })
+    })
+</script>
+
+
