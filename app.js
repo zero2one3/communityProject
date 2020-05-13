@@ -2,7 +2,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const router = require('./router')
-var session = require('express-session')
+const session = require('express-session')
 
 //创建服务器实例
 const app = express()

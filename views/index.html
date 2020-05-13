@@ -9,30 +9,159 @@
     .content-container{
         width: 1350px;
         margin: 17px auto;
-        height: 2000px;
+        height: 1200px;
         background: #fff;
         border-radius: 10px;
     }
     .content-container .items{
         width: 100%;
         height: 100%;
+        position: relative;
+    }
+    .pages{
+        width: 100%;
+        height: 5%;
+        position: absolute;
+        bottom: 0;
     }
     .content-container .items .item{
-        height: 50px;
+        height: 5%;
         border-bottom: 1px solid #e1e1e1;
+        display: flex;
+        align-items: center;
+    }
+    .content-container .items .item:hover{
+        background: #f6f6f6;
+    }
+    .item .each{
+        display: inline-block;
+        height: 60%;
+    }
+    .item .author{
+        margin-left: 20px;
+        font-size: 16px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        width: 8%;
+    }
+    .item .author a{
+        color: #778087;
+        text-decoration: none;
+    }
+    .item .like{
+        width: 5%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .item .like img{
+        height: 40%;
+    }
+    .item .like span{
+        margin-left: 5px;
+        display: flex;
+        font-size: 12px;
+        align-items: flex-end;
+    }
+    .item .type{
+        width: 3%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .item .type span{
+        display: inline-block;
+        height: 58%;
+        background: #80bd01;
+        padding: 0 3px;
+        font-size: 13px;
+        color: #fff;
+        font-weight: 400;
+    }
+    .item .title{
+        width: 70%;
+        margin-left: 2px;
+        display: flex;
+        align-items: center;
+    }
+    .item .title span{
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 18px;
+    }
+    .item .title span a{
+        color: #333;
+    }
+    .item .pub-time{
+        width: 10%;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        float: right;
+    }
+    .pages .pagination{
+        height: 40px;
+        margin: 10px 0 0 10px;
+        width: 30%;
     }
 </style>
 {{ /block }}
 
-{{ block 'script' }}
-
-{{ /block }}
 
 {{ block 'content' }}
 <div class="content-container">
     <div class="items">
-        <div class="item"></div>
+        {{ each topics }}
+        <div class="item">
+
+            <div class="author each">
+                <a href="#">{{ $value.author_name }}</a>
+            </div>
+
+            <div class="like each">
+                <img src="/public/img/like.png" alt="">
+                <span>{{ $value.like }}</span>
+            </div>
+            <div class="type each">
+                <span>{{ $value.type }}</span>
+            </div>
+
+            <div class="title each">
+                <span><a href="#">{{ $value.title }}</a></span>
+            </div>
+            <div class="pub-time each">
+                <span>{{ $value.publish_time }}</span>
+            </div>
+        </div>
+        {{ /each }}
+        <div class="pages">
+            <div class="pagination"
+                <ul>
+                    <li class="disabled"><a>&lt;</a></li>
+                    <li class="disabled active"><a>1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a>...</a></li>
+                    <li><a href="#">&gt;</a></li>
+                </ul>
+            </div>
+        </div>
+
     </div>
 </div>
+{{ /block }}
+
+{{ block 'script' }}
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script>
+    $(function () {
+
+    })
+</script>
 {{ /block }}
 

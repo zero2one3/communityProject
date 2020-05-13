@@ -18,7 +18,7 @@
         }
         .login-box{
             width: 27%;
-            height: 60%;
+            height: 70%;
             position: relative;
         }
         .title{
@@ -65,6 +65,18 @@
             right: 0;
             margin-right: 10px;
         }
+        .code-from{
+            display: flex;
+            align-items: center;
+        }
+
+        .code-from input{
+            width: 62%;
+        }
+        .code-from button{
+            width: 36%;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -81,12 +93,17 @@
                 <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email" name="email">
             </div>
             <div class="form-group">
-                <label for="exampleInputPassword2">昵称</label>
-                <input type="text" class="form-control" id="exampleInputPassword2" placeholder="Name" name="name">
+                <label for="NickName">昵称</label>
+                <input type="text" class="form-control" id="NickName" placeholder="Name" name="name">
             </div>
             <div class="form-group">
                 <label for="exampleInputPassword1">密码</label>
                 <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name="psd">
+            </div>
+            <div class="form-group code-from">
+
+                <input type="text" class="form-control" placeholder="Code" name="code">
+                <button type="button" class="btn btn-success code-btn">发送验证码</button>
             </div>
 
             <button type="submit" class="btn btn-success">注册</button>
@@ -98,32 +115,86 @@
         <a href="/login">点击登录</a>
         <a href="/" class="gotohome">首页</a>
     </div>
+
+
     <script>
         $(function () {
+            let $code = ''
             const $form = $('#register')
+            //处理表单提交事件
             $form.on('submit', function(event) {
                 //阻止表单提交默认行为
                 event.preventDefault()
                 //获取post表单数据
                 const $formdata = $(this).serialize()
+                console.log($formdata)
                 //发送ajax请求
                 $.ajax({
                     url: '/register',
                     type: 'post',
                     dataType: 'json',
-                    data: $formdata,
+                    data: $formdata+'&serverCode='+$code,
                     success: function (data) {
                         if(data.status === 0) {
                             window.alert('用户名或邮箱已存在')
-                        } else if(data.status === 1) {
-                            window.alert('注册成功！')
-                            window.location.href = '/'
-                        } else if(data.status === 500) {
+                        }
+                        else if(data.status === 500) {
                             window.alert('服务器繁忙，请稍后重试')
                         }
+                        else if(data.status === -1){
+                            window.alert('验证码输入错误')
+                        }
+                        else if(data.status === 1) {
+                            window.alert('注册成功！')
+                            window.location.href = '/'
+                        }
+
                     }
                 })
 
+            })
+
+
+            //处理发送验证码事件
+            const $codeBtn = $('.code-btn')
+            $codeBtn.click(function () {
+                const $email = $('#exampleInputEmail1')[0].value
+                if(!$email) { return window.alert('请输入电子邮箱') }
+                $.ajax({
+                    url: '/sendemail',
+                    dataType: 'json',
+                    type: 'get',
+                    data: {email: $email},
+                    success: function (data) {
+                        if(data.status === 0) {
+                            window.alert('验证码发送失败，该邮箱不存在')
+                        }
+                        else if(data.status === -1){
+                            window.alert('验证码发送失败，服务器繁忙，请稍后重试')
+                        }
+                        else if(data.status === 1) {
+                            window.alert('验证码发送成功，请尽快填写')
+                            $code = data.code
+
+                            $codeBtn.attr('disabled','disabled')
+                            let totalTimer = setTimeout(() => {
+                                $codeBtn.removeAttr('disabled')
+                                $codeBtn.html('发送验证码')
+                            },60000)
+                            let countDown = 60
+                            let eachTimer = setInterval(() => {
+                                countDown --
+                                if(countDown > 0) {
+                                    $codeBtn.html(countDown + '秒后可再次发送')
+                                }
+                                else {
+                                    clearInterval(eachTimer)
+                                    clearTimeout(totalTimer)
+                                }
+                            }, 1000)
+                        }
+                    }
+                })
             })
         })
     </script>

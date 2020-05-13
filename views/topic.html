@@ -1,0 +1,161 @@
+{{ extend './home/home.html' }}
+
+
+{{ block 'title' }}
+发表话题
+{{ /block }}
+
+
+{{ block 'style' }}
+<style>
+    .content-container{
+        width: 1350px;
+        margin: 17px auto;
+        height: 100vh;
+        border-radius: 10px;
+    }
+    .content-container .content-l{
+        width: 73.5%;
+        height: 100%;
+        background: #fff;
+        float: left;
+        border-radius: 7px;
+    }
+    .content-container .content-r{
+        width: 25%;
+        height: 100%;
+        background: #fff;
+        float: right;
+        border-radius: 7px;
+    }
+    .content-l .top-bar{
+        width: 100%;
+        height: 7%;
+        background: #f6f6f6;
+        display: flex;
+        align-items: center;
+        border-radius: 7px;
+    }
+    .content-l .top-bar span{
+        margin-left: 10px;
+    }
+    .content-l .top-bar span:nth-child(1) a{
+        color: #80bd01;
+    }
+    .content-l .top-bar span:nth-child(2){
+        font-size: 18px;
+        color: #999999;
+    }
+    .content-l .top-bar span:nth-child(3){
+        color: #999999;
+    }
+    form{
+        height: 100%;
+    }
+    form .select-type{
+        width: 100%;
+        height: 34px;
+        padding-top: 30px;
+        display: flex;
+        align-items: center;
+    }
+    .select-type label{
+        float: left;
+    }
+    .select-type select{
+        width: 20%;
+        margin-left: 20px;
+    }
+    .form-group{
+        padding: 5px 15px;
+    }
+    .textarea{
+        height: 65%;
+    }
+    textarea{
+        width: 100%;
+        height: 100%;
+        resize: none;
+    }
+</style>
+{{ /block }}
+
+
+{{ block 'content' }}
+<div class="content-container">
+    <div class="content-l">
+        <div class="top-bar">
+            <span><a href="/">主页</a></span>
+            <span>/</span>
+            <span>发布话题</span>
+        </div>
+        <form action="">
+
+            <div class="form-group select-type">
+                <label for="type">选择类型:</label>
+                <select id="type" name="type" class="form-control">
+                    <option value="">请选择</option>
+                    <option value="分享">分享</option>
+                    <option value="问答">问答</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="title">标题</label>
+                <input type="text" class="form-control" id="title" placeholder="标题字数 5 字以上" name="title" minlength="10">
+            </div>
+            <div class="form-group textarea">
+                <textarea name="content" id="content" placeholder="在此输入正文内容" dirname="content"></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary submit">提交</button>
+            </div>
+
+        </form>
+    </div>
+    <div class="content-r"></div>
+</div>
+{{ /block }}
+
+
+{{ block 'script' }}
+<script src="/node_modules/jquery/dist/jquery.js"></script>
+<script>
+    $(function () {
+        const $submit = $('.submit')
+        $submit.click(function (e) {
+            e.preventDefault()
+            const $title = $('#title')[0].value
+            const $content = $('#content')[0].value
+            const $type = $('#type')[0].value
+            if(!$type){
+                return window.alert('请选择文章类型')
+            }
+            else if(!$title) {
+                return window.alert('请填写标题')
+            }
+            else if(!$content) {
+                return window.alert('请填写正文内容')
+            }
+            else {
+                const $formdata =  'type=' + $type + '&title=' + $title + '&content=' + $content
+                $.ajax({
+                    url: '/topic',
+                    type: 'post',
+                    dataType: 'json',
+                    data: $formdata,
+                    success: function (data) {
+                        if(data.status === 500) {
+                            return window.alert('服务器繁忙，请稍后重试')
+                        }
+                        else if(data.status === 1) {
+                            window.alert('话题发表成功')
+                            window.location.href = '/'
+                        }
+                    }
+                })
+            }
+        })
+    })
+</script>
+{{ /block }}
