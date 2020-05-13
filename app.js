@@ -28,6 +28,6 @@ app.use(session({
 //挂载路由
 app.use(router)
 
-app.listen(5000, () => {
-    console.log('The Server is running ... You can visit http://localhost:5000/')
+app.listen(3000, () => {
+    console.log('The Server is running ... You can visit http://localhost:3000/')
 })

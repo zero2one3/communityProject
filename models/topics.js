@@ -1,9 +1,8 @@
 const mongoose = require('mongoose')
-const moment = require('moment')
 const Schema = mongoose.Schema
 
 const Topics =  mongoose.createConnection('mongodb://localhost/topics')
-//moment(new Date).format('YYYY-MM-DD HH:mm:ss')
+
 const topicSchema = new Schema({
     //话题标题
     title: {
@@ -28,12 +27,12 @@ const topicSchema = new Schema({
     //发表时间
     publish_time: {
         type: String,
-        default: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
+        required: true
     },
     //最后一次修改时间
     lastModify_time: {
         type: String,
-        default: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
+        required: true
     },
     //该话题下的评论
     comments: {

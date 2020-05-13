@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const moment = require('moment')
 const Scheme = mongoose.Schema
 
 mongoose.connect('mongodb://localhost/user')
@@ -45,12 +44,17 @@ const userScheme = new Scheme({
     //注册时间
     register_time: {
         type: String,
-        default: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
+        required: true
     },
     //最后一次修改账号信息时间
     last_modifyTime: {
         type: String,
-        default: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
+        required: true
+    },
+    //给予管理系统特权
+    privilege: {
+        type: Number,
+        default: 0
     }
 })
 

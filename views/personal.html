@@ -1,0 +1,187 @@
+{{ extend './home/home.html' }}
+
+{{ block 'title' }}
+个人中心
+{{ /block }}
+
+
+{{ block 'style' }}
+
+{{ block 'pri-style' }}
+
+{{ /block }}
+
+<style>
+    body{
+        background: #fff;
+    }
+    .personal-box{
+        width: 1350px;
+        margin: 17px auto;
+        height: 1200px;
+        background: #fff;
+
+    }
+    .box-l{
+        display: inline-block;
+        height: 100%;
+        width: 270px;
+        float: left;
+    }
+    .box-r{
+        display: inline-block;
+        height: 100%;
+        width: 1030px;
+        float: right;
+    }
+    .box-l .head{
+        width: 100%;
+    }
+    .box-l .user-name{
+        width: 100%;
+        height: 85px;
+        font-size: 25px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    .box-l .user-email{
+        width: 100%;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        color: #666;
+        margin-bottom: 20px;
+    }
+    .box-l .user-email img{
+        height: 17px;
+        width: 17px;
+        margin-right: 5px;
+    }
+    .box-l .btn{
+        width: 100%;
+    }
+    .top-bar{
+        width: 100%;
+        height: 54px;
+        border-bottom: 1px solid #e1e1e1;
+    }
+    .top-bar span{
+        float: left;
+        display: inline-block;
+        height: 100%;
+        line-height: 54px;
+        color: #586069;
+        padding: 0 10px;
+        cursor: pointer;
+        margin-right: 40px;
+    }
+    .top-bar span:hover{
+        border-bottom: 2px solid orangered;
+    }
+    .top-bar .active{
+        border-bottom: 2px solid orangered;
+    }
+    .content{
+        width: 100%;
+        display: inline-block;
+    }
+    .info-content{
+        width: 100%;
+    }
+    .info-content div{
+        height: 30px;
+        padding: 30px 0;
+        font-size: 17px;
+    }
+</style>
+{{ /block }}
+
+
+{{ block 'content' }}
+<div class="personal-box">
+
+    <div class="box-l">
+        <img src="{{ user.head }}" alt="" class="head">
+        <div class="user-name"><span>{{ user.name }}</span></div>
+        <div class="user-email">
+            <img src="/public/img/email.png" alt="">
+            <span>{{ user.email }}</span>
+        </div>
+        <a href="#" class="btn btn-info">编辑信息</a>
+    </div>
+
+    <div class="box-r">
+
+        <div class="top-bar">
+            <span class="info active">个人信息</span>
+            <span class="topic">我的话题</span>
+            <span class="start">我的关注</span>
+            <span class="collection">我的收藏</span>
+            <span class="msg">消息</span>
+            {{ block 'privilege' }} {{ /block }}
+        </div>
+
+        <div class="content">
+            <div class="info-content">
+                <div><span>昵称：&nbsp;&nbsp;</span><span>{{ user.name }}</span></div>
+                <div><span>i&nbsp;d：&nbsp;&nbsp;</span><span>{{ user._id }}</span></div>
+                <div><span>邮箱：&nbsp;&nbsp;</span><span>{{ user.email }}</span></div>
+                <div><span>性别：&nbsp;&nbsp;</span><span class="gender-span">{{ user.gender }}</span></div>
+                <div><span>简介：&nbsp;&nbsp;</span><span class="intro-span">{{ user.introduce }}</span></div>
+                <div><span>注册时间：&nbsp;&nbsp;</span><span>{{ user.register_time }}</span></div>
+                <div><span>最后一次修改信息时间：&nbsp;&nbsp;</span><span>{{ user.last_modifyTime }}</span></div>
+            </div>
+
+
+            <div class="topic-content"></div>
+            <div class="start-content"></div>
+            <div class="collection-content"></div>
+            <div class="msg-content"></div>
+            {{ block 'pri-content' }} {{ /block }}
+        </div>
+
+    </div>
+</div>
+{{ /block }}
+
+{{ block 'script' }}
+
+<script>
+    $(function () {
+        const $each_bar = $('.top-bar span')
+        const $content = $('.content').children()
+        $content.eq(0).show().siblings().hide()
+        //监听个人中心导航栏的点击
+        $each_bar.click(function () {
+            $(this).addClass('active').siblings().removeClass('active')
+            $content.eq($(this).index()).show().siblings().hide()
+        })
+        const $gender = $('.gender-span')
+        const $intro = $('.intro-span')
+        //判断性别
+        switch (parseInt($gender.html())) {
+            case -1:
+                $gender.html('保密')
+                break
+            case 0:
+                $gender.html('男')
+                break
+            case 1:
+                $gender.html('女')
+        }
+        //判断简介内容是否为空
+        if(!$intro.html()) {
+            $intro.html('无')
+        }
+
+    })
+</script>
+
+{{ block 'pri-script' }}
+
+{{ /block }}
+
+{{ /block }}
+
+

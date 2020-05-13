@@ -1,0 +1,32 @@
+{{ extend './personal.html' }}
+
+{{ block 'pri-style' }}
+<style>
+    .privilege-content{
+        width: 100%;
+        height: 1146px;
+        font-size: 0;
+    }
+    .privilege-content a{
+        margin-top: 20px;
+        margin-right: 20px;
+        font-size: 14px;
+    }
+</style>
+{{ /block }}
+
+{{ block 'privilege' }}
+<span class="privilege">管理系统</span>
+{{ /block }}
+
+{{ block 'pri-content' }}
+<div class="privilege-content">
+    <a href="/manageUser" class="btn btn-danger">用户信息管理系统</a>
+    <a href="/manageTopic" class="btn btn-danger">话题管理系统</a>
+</div>
+{{ /block }}
+
+{{ block 'pri-script' }}
+
+<script></script>
+{{ /block }}

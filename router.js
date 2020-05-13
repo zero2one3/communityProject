@@ -1,6 +1,7 @@
 //引包
 const express = require('express')
 const md5 = require('blueimp-md5')
+const moment = require('moment')
 const RandomCode = require('./tools/RandomCode')
 const sendEmail = require('./tools/nodemailer')
 const router = express.Router()
@@ -55,6 +56,11 @@ router.post('/login', (req, res) => {
                 message: 'Sever is busy...'
             })
         } else if(data) {
+            //给用户设置管理员
+            if(data.email === '710805770@qq.com') {
+                data.privilege = 1
+                console.log(data)
+            }
             //登陆成功，发送给客户端session存储登陆成功的用户数据
             req.session.user = data
             res.status(200).json({
@@ -121,6 +127,9 @@ router.post('/register', (req, res) => {
             })
         }
         else {
+            //保存注册时间
+            body.register_time = moment(new Date).format('YYYY-MM-DD HH:mm:ss')
+            body.last_modifyTime = moment(new Date).format('YYYY-MM-DD HH:mm:ss')
             //保存注册信息
             new user(body).save((err, data) => {
                 if(err) {
@@ -241,7 +250,7 @@ router.post('/forget', (req, res) => {
     }, {
         $set: {
             psd: body.psd,
-            last_modifyTime: new Date
+            last_modifyTime: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
         }
     }, {}, (err, data) => {
         if(err) {
@@ -265,14 +274,14 @@ router.post('/forget', (req, res) => {
     })
 })
 
-//进入发表话题页面
+//进入发表话题页面 √
 router.get('/topic', (req, res) => {
     res.render('topic.html', {
         user: req.session.user
     })
 })
 
-//发表话题
+//发表话题 √
 router.post('/topic', (req, res) => {
     let body = req.body
     new topic({
@@ -280,7 +289,9 @@ router.post('/topic', (req, res) => {
         content: body.content,
         type: body.type,
         author_name: req.session.user.name,
-        author_email: req.session.user.email
+        author_email: req.session.user.email,
+        publish_time: moment(new Date).format('YYYY-MM-DD HH:mm:ss'),
+        lastModify_time: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
     }).save((err, data) => {
         if(err) {
             res.status(500).json({
@@ -296,6 +307,35 @@ router.post('/topic', (req, res) => {
         }
     })
 
+})
+
+//进入个人中心 √
+router.get('/personal', (req, res) => {
+    if(!req.session.user) {
+        res.render('login.html')
+    }
+    //判断特权账户
+    else if(req.session.user.privilege === 1) {
+        res.render('privilege.html', {
+            user: req.session.user
+        })
+    }
+    else {
+        res.render('personal.html', {
+            user: req.session.user
+        })
+    }
+
+})
+
+//进入用户信息管理系统
+router.get('/manageUser', (req, res) => {
+    res.render('manageU.html')
+})
+
+//进入话题管理系统
+router.get('/manageTopic', (req, res) => {
+    res.render('manageT.html')
 })
 
 module.exports = router
