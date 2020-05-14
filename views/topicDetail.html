@@ -1,0 +1,247 @@
+{{ extend './home/home.html' }}
+
+{{ block 'title' }}
+话题详情
+{{ /block }}
+
+{{ block 'style' }}
+<style>
+    .content-container{
+        width: 1350px;
+        margin: 17px auto;
+        display: inline-block;
+        border-radius: 10px;
+        position: relative;
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+    .content-container .content-l{
+        width: 73.5%;
+        display: inline-block;
+        float: left;
+        border-radius: 7px;
+    }
+    .content-container .content-r{
+        width: 25%;
+        height: 900px;
+        background: #fff;
+        float: right;
+        border-radius: 7px;
+    }
+    .top-title{
+        width: 100%;
+        border-bottom: 1px solid #eee;
+        background: #fff;
+
+    }
+    .top-title .title{
+        display: inline-block;
+        font-size: 22px;
+        margin: 10px;
+        font-weight: 600;
+    }
+    .top-title .title span:nth-child(1){
+        font-size: 12px;
+        color: #fff;
+        background: #80bd01;
+        padding: 2px 4px;
+    }
+    .top-title .topicInfo{
+        font-size: 13px;
+        height: 45px;
+
+    }
+    .top-title .topicInfo span{
+        color: #838383;
+        margin-left: 10px;
+
+    }
+    .top-title .topicInfo .collection{
+        float: right;
+        color: #fff;
+        background: #80bd01;
+        margin-right: 10px;
+    }
+    .content{
+        padding: 30px 20px;
+        background: #fff;
+        display: inline-block;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    .content span{
+        width: 100%;
+        word-wrap:break-word;
+        word-break:break-all;
+        font-size: 18px;
+        letter-spacing:4px;
+    }
+    .comments{
+        background: #fff;
+        display: inline-block;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    .comments .comments-top{
+        height: 40px;
+        width: 100%;
+        background: #f6f6f6;
+        display: flex;
+        align-items: center;
+    }
+    .comments .comments-top span{
+        display: inline-block;
+        color: #444;
+        margin-left: 8px;
+    }
+    ul,li{
+        padding:0; margin:0;
+    }
+    .comments-list{
+        width: 100%;
+
+        list-style: none;
+    }
+    .comments-list li{
+        width: 100%;
+        padding: 8px 16px;
+        display: inline-block;
+        border-bottom: 1px solid #e1e1e1;
+    }
+    .comments-list li .commentPerson{
+        width: 100%;
+        height: 20px;
+    }
+    .comments-list li .commentPerson span{
+        color: #666;
+        margin-left: 10px;
+    }
+    .comments-list li .commentPerson span:nth-child(4){
+        float: right;
+    }
+    .comments-list li .commentContent{
+        width: 100%;
+        display: inline-block;
+        padding: 10px 30px;
+    }
+    .no-comment{
+        width: 100%;
+        padding: 10px;
+    }
+    .commentContent span{
+        width: 100%;
+        letter-spacing: 1px;
+        display: inline-block;
+        text-indent: 28px;
+    }
+    .addComment{
+        background: #fff;
+        display: inline-block;
+        width: 100%;
+    }
+    .addComment .add-top{
+        height: 40px;
+        width: 100%;
+        background: #f6f6f6;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #e1e1e1;
+        margin-bottom: 10px;
+    }
+    .addComment .add-top span{
+        display: inline-block;
+        color: #444;
+        margin-left: 8px;
+    }
+    textarea{
+        width: 100%;
+        height: 200px;
+        resize: none;
+        border: 0;
+        outline: 0;
+        padding: 0 12px;
+    }
+    .submit{
+        margin-left: 20px;
+    }
+</style>
+{{ /block }}
+
+{{ block 'content' }}
+<div class="content-container">
+
+    <div class="content-l">
+        <div class="top-title">
+            <div class="title">
+                <span>{{ topics.type }}</span>
+                <span>{{ topics.title }}</span>
+            </div>
+            <div class="topicInfo">
+                <span class="pubTime">发布于{{ topics.publish_time }}</span>
+                <span class="author">作者&nbsp;{{ topics.author_name }}</span>
+                <span class="start">点赞数&nbsp;{{ topics.like }}</span>
+                <a class="collection btn">收藏</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <span>{{ topics.content }}</span>
+        </div>
+
+        <div class="comments">
+            <div class="comments-top">
+                <span>{{ topics.comments.length }}&nbsp;回复</span>
+            </div>
+            <ul class="comments-list">
+                {{ if topics.comments.length }}
+                    {{ each topics.comments }}
+                    <li>
+                        <div class="commentPerson">
+                            <span>{{ $value.name }}</span>
+                            <span>{{ $value.index + 1 }}楼</span>
+                            <span>发表评论：</span>
+                            <span>{{ $value.publish_time }}</span>
+                        </div>
+
+                        <div class="commentContent">
+                            <span>{{ $value.content }}</span>
+                        </div>
+                    </li>
+                    {{ /each }}
+                {{ else }}
+                    <div class="no-comment">暂时没有人评论</div>
+                {{ /if }}
+
+            </ul>
+
+        </div>
+
+        <div class="addComment">
+            <div class="add-top">
+                <span>添加回复</span>
+            </div>
+            <form action="">
+                <div class="form-group textarea">
+                    <textarea name="content" id="content" placeholder="在此输入评论内容" ></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary submit">提交</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="content-r"></div>
+
+</div>
+{{ /block }}
+
+{{ block 'script' }}
+<script>
+    $(function () {
+        const $submit = $('.submit')
+    })
+</script>
+
+{{ /block }}

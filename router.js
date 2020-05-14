@@ -59,7 +59,6 @@ router.post('/login', (req, res) => {
             //给用户设置管理员
             if(data.email === '710805770@qq.com') {
                 data.privilege = 1
-                console.log(data)
             }
             //登陆成功，发送给客户端session存储登陆成功的用户数据
             req.session.user = data
@@ -328,14 +327,126 @@ router.get('/personal', (req, res) => {
 
 })
 
-//进入用户信息管理系统
+//进入用户信息管理系统  √
 router.get('/manageUser', (req, res) => {
+    if(!req.session.user) {
+        return res.render('login.html')
+    }
+    else if(req.session.user.privilege !== 1) {
+        return res.render('personal.html', {
+            user: req.session.user
+        })
+    }
     res.render('manageU.html')
 })
 
-//进入话题管理系统
+//用户信息管理系统  数据整体查询 √
+router.post('/manageuSearchA', (req, res) => {
+    //查找全部用户信息
+    user.find((err, data) => {
+        if(err) {
+            res.status(500).json({
+                status: 500,
+                message: '系统繁忙'
+            })
+        }
+        else{
+            res.status(200).json({
+                status: 1,
+                message: '查找成功',
+                data: data
+            })
+        }
+
+    })
+
+
+})
+
+//用户信息管理系统  数据根据关键词查询  √
+router.post('/manageuSearchP', (req, res) => {
+
+    if(req.body.type === 'email') {
+        user.find({email: {$regex: req.body.email}}, (err, data) => {
+            if(err) {
+                res.status(500).json({
+                    status: 500,
+                    message: '服务器繁忙'
+                })
+            }
+            else{
+                res.status(200).json({
+                    status: 1,
+                    message: '查找成功',
+                    data: data
+                })
+            }
+
+        })
+    }
+    else if(req.body.type === 'name') {
+        user.find({name: {$regex: req.body.name}}, (err, data) => {
+            if(err) {
+                res.status(500).json({
+                    status: 500,
+                    message: '服务器繁忙'
+                })
+            }
+            else{
+                res.status(200).json({
+                    status: 1,
+                    message: '查找成功',
+                    data: data
+                })
+            }
+
+        })
+    }
+
+})
+
+//进入话题管理系统   ×
 router.get('/manageTopic', (req, res) => {
     res.render('manageT.html')
+})
+
+//获取话题文章数据  √
+router.get('/gettopic', (req, res) => {
+    /*主要逻辑
+    1. 获取文章相关信息
+    2. 根据文章相关信息去数据库找文章数据
+    3. 找到数据后给session发送一个，用于保存文章数据    //不太好  无法直接通过地址访问
+    * */
+    //获取文章数据
+    topic.findOne({
+        title: req.query.title
+    }, (err, data) => {
+        if(err) {
+            res.status(500).json({
+                status: 500,
+                message: '服务器错误'
+            })
+        }
+        else {
+            req.session.topics = data
+            res.status(200).json({
+                status: 1,
+                message: '获取文章数据成功',
+            })
+        }
+    })
+
+})
+
+//进入话题详情页  √
+router.get('/topicdetail', (req, res) => {
+    /*主要逻辑
+    1. 渲染话题详情页，并传入导航栏的用户session信息以及话题文章数据session
+    * */
+    res.render('topicDetail.html', {
+        user: req.session.user,
+        topics: req.session.topics
+    })
 })
 
 module.exports = router

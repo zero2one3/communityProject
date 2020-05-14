@@ -61,8 +61,8 @@ const userScheme = new Scheme({
 module.exports = mongoose.model('User', userScheme)
 // user =  mongoose.model('User', userScheme)
 // user.find({
-//     email: '710805770@qq.com'
-// }, (err, data) => {
+//     name: {$regex: '测'}
+//     } ,(err, data) => {
 //     if(err) {
 //         console.log('查询失败')
 //     }
