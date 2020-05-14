@@ -130,7 +130,7 @@
             </div>
 
             <div class="title each">
-                <span><a href="">{{ $value.title }}</a></span>
+                <span><a href="/topicdetail?id={{ $value.id }}">{{ $value.title }}</a></span>
             </div>
             <div class="pub-time each">
                 <span>{{ $value.publish_time }}</span>
@@ -160,28 +160,8 @@
 <script src="/node_modules/jquery/dist/jquery.js"></script>
 <script>
     $(function () {
-        const $title = $('.title span a')
-        $title.click(function (e) {
-            e.preventDefault()
-            //测试
-            console.log($(this).html())
 
-            let $formdata = 'title=' + $(this).html()
-            $.ajax({
-                url: '/gettopic',
-                type: 'get',
-                dataType: 'json',
-                data: $formdata,
-                success: function (data) {
-                    if(data.status === 500) {
-                        window.alert('服务器繁忙，请稍后重试')
-                    }
-                    else if(data.status === 1) {
-                        window.location.href = '/topicdetail'
-                    }
-                }
-            })
-        })
+
     })
 </script>
 {{ /block }}

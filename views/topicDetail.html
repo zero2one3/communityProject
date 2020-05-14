@@ -45,6 +45,7 @@
         color: #fff;
         background: #80bd01;
         padding: 2px 4px;
+        border-radius: 3px;
     }
     .top-title .topicInfo{
         font-size: 13px;
@@ -116,7 +117,7 @@
         color: #666;
         margin-left: 10px;
     }
-    .comments-list li .commentPerson span:nth-child(4){
+    .comments-list li .commentPerson span:nth-child(5){
         float: right;
     }
     .comments-list li .commentContent{
@@ -127,6 +128,13 @@
     .no-comment{
         width: 100%;
         padding: 10px;
+    }
+    .isauthor{
+        font-size: 12px;
+        color: #fff !important;
+        background: #80bd01;
+        padding: 2px 4px;
+        border-radius: 3px;
     }
     .commentContent span{
         width: 100%;
@@ -188,28 +196,32 @@
             <span>{{ topics.content }}</span>
         </div>
 
+
         <div class="comments">
             <div class="comments-top">
-                <span>{{ topics.comments.length }}&nbsp;回复</span>
+                <span>{{ comments.length }}&nbsp;回复</span>
             </div>
             <ul class="comments-list">
-                {{ if topics.comments.length }}
-                    {{ each topics.comments }}
-                    <li>
-                        <div class="commentPerson">
-                            <span>{{ $value.name }}</span>
-                            <span>{{ $value.index + 1 }}楼</span>
-                            <span>发表评论：</span>
-                            <span>{{ $value.publish_time }}</span>
-                        </div>
+                {{ if comments.length }}
+                {{ each comments }}
+                <li>
+                    <div class="commentPerson">
+                        <span>{{ $value.name }}</span>
+                        {{ if $value.isAuthor }}
+                        <span class="isauthor">作者</span>
+                        {{ /if }}
+                        <span>{{ $index + 1}}楼</span>
+                        <span>发表评论：</span>
+                        <span>{{ $value.publish_time }}</span>
+                    </div>
 
-                        <div class="commentContent">
-                            <span>{{ $value.content }}</span>
-                        </div>
-                    </li>
-                    {{ /each }}
+                    <div class="commentContent">
+                        <span>{{ $value.content }}</span>
+                    </div>
+                </li>
+                {{ /each }}
                 {{ else }}
-                    <div class="no-comment">暂时没有人评论</div>
+                <div class="no-comment">暂时没有人评论</div>
                 {{ /if }}
 
             </ul>
@@ -221,6 +233,7 @@
                 <span>添加回复</span>
             </div>
             <form action="">
+                <input type="hidden" name="id" value="{{ topics.id }}" id="id">
                 <div class="form-group textarea">
                     <textarea name="content" id="content" placeholder="在此输入评论内容" ></textarea>
                 </div>
@@ -241,6 +254,37 @@
 <script>
     $(function () {
         const $submit = $('.submit')
+        const $id = $('#id')[0].value
+        const $name = '{{ topics.author_name }}'
+        $submit.click(function (e) {
+            e.preventDefault()
+            const $content = $('#content')[0].value
+            if (!$content) {
+                window.alert('请输入评论信息')
+            }
+            else {
+                let $formdata = 'id=' + $id + '&content=' +$content + '&name=' + $name
+                $.ajax({
+                    url: '/subComments',
+                    type: 'post',
+                    dataType: 'json',
+                    data: $formdata,
+                    success: function (data) {
+                        if(data.status === 500) {
+                            window.alert('服务器繁忙，请稍后重试')
+                        }
+                        else if(data.status === 0) {
+                            window.alert('请先登录账号')
+                        }
+                        else if(data.status === 1) {
+                            window.alert('评论发表成功')
+                            window.location.href = '/topicdetail' + '?id=' + $id
+                        }
+                    }
+                })
+            }
+
+        })
     })
 </script>
 

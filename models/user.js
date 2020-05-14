@@ -55,14 +55,24 @@ const userScheme = new Scheme({
     privilege: {
         type: Number,
         default: 0
+    },
+    //收藏的话题文章id
+    collections: {
+        type: Array,
+        default: []
+    },
+    //关注的用户
+    watch: {
+        type: Array,
+        default: []
     }
 })
 
 module.exports = mongoose.model('User', userScheme)
+
+
 // user =  mongoose.model('User', userScheme)
-// user.find({
-//     name: {$regex: '测'}
-//     } ,(err, data) => {
+// user.find((err, data) => {
 //     if(err) {
 //         console.log('查询失败')
 //     }

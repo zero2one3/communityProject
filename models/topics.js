@@ -34,11 +34,6 @@ const topicSchema = new Schema({
         type: String,
         required: true
     },
-    //该话题下的评论
-    comments: {
-        type: Array,
-        default: []
-    },
     //话题类型
     type: {
         type: String,
