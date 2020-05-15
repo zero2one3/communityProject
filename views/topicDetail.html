@@ -117,7 +117,7 @@
         color: #666;
         margin-left: 10px;
     }
-    .comments-list li .commentPerson span:nth-child(5){
+    .comments-list li .commentPerson .comment-pubTime{
         float: right;
     }
     .comments-list li .commentContent{
@@ -212,7 +212,7 @@
                         {{ /if }}
                         <span>{{ $index + 1}}楼</span>
                         <span>发表评论：</span>
-                        <span>{{ $value.publish_time }}</span>
+                        <span class="comment-pubTime">{{ $value.publish_time }}</span>
                     </div>
 
                     <div class="commentContent">

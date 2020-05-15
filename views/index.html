@@ -6,6 +6,15 @@
 
 {{ block 'style' }}
 <style>
+    /*谷歌*/
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
+    /*火狐*/
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
     .content-container{
         width: 1350px;
         margin: 17px auto;
@@ -104,8 +113,74 @@
     }
     .pages .pagination{
         height: 40px;
-        margin: 10px 0 0 10px;
-        width: 30%;
+        margin: 10px 0 10px;
+        width: 40%;
+        float: left;
+    }
+    .pagination ul{
+        list-style: none;
+        height: 100%;
+    }
+    .pagination li{
+        height: 100%;
+        float: left;
+        width: 40px;
+        text-align: center;
+        line-height: 40px;
+        border: 1px solid #b69999;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+    .pagination li:hover{
+        border: 1px solid #3e89fa;
+    }
+    .pagination li:hover a{
+        color: #3e89fa;
+
+    }
+    .pagination li a{
+        display: inline-block;
+        color: #333;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+    }
+    .pagination .active{
+        border: 0;
+    }
+    .nomore{
+        width: 100%;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .nomore span{
+        font-size: 30px;
+    }
+    .jumppage{
+        height: 40px;
+        margin: 10px 0 10px;
+        width: 40%;
+        float: left;
+        font-size: 16px;
+    }
+    .jumppage span, .jumppage input, .jumppage button{
+        float: left;
+        height: 40px;
+        line-height: 40px;
+    }
+    .jumppage button{
+        line-height: 0;
+        margin-left: 15px;
+    }
+    .jumppage input{
+        width: 50px;
+        height: 40px;
+        margin: 0 5px;
+    }
+    .jumppage span:nth-child(2){
+        margin-left: 15px;
     }
 </style>
 {{ /block }}
@@ -114,6 +189,7 @@
 {{ block 'content' }}
 <div class="content-container">
     <div class="items">
+        {{ if topics.length }}
         {{ each topics }}
         <div class="item">
 
@@ -137,19 +213,32 @@
             </div>
         </div>
         {{ /each }}
+        {{ else }}
+        <div class="nomore"><span>没有更多数据</span></div>
+        {{ /if }}
         <div class="pages">
-            <div class="pagination"
+            <div class="pagination">
                 <ul>
-                    <li class="disabled"><a>&lt;</a></li>
-                    <li class="disabled active"><a>1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
+                    <li class="tostart"><a href="/">首页</a></li>
+                    <li class="pre"><a href="">&lt;</a></li>
+                    <li class="page"><a href=""></a></li>
+                    <li class="page"><a href=""></a></li>
+                    <li class="page"><a href=""></a></li>
+                    <li class="page"><a href=""></a></li>
+                    <li class="page"><a href=""></a></li>
                     <li><a>...</a></li>
-                    <li><a href="#">&gt;</a></li>
+                    <li class="next"><a href="">&gt;</a></li>
+                    <li class="toend"><a href="/?page={{ totalPage }}">尾页</a></li>
                 </ul>
             </div>
+            <div class="jumppage">
+                <span>共&nbsp;{{ totalPage }}&nbsp;页</span>
+                <span>到第</span>
+                <input type="number" class="form-control" onkeyUp="">
+                <span>页</span>
+                <button class="btn btn-default">确定</button>
+            </div>
+
         </div>
 
     </div>
@@ -157,11 +246,55 @@
 {{ /block }}
 
 {{ block 'script' }}
-<script src="/node_modules/jquery/dist/jquery.js"></script>
 <script>
     $(function () {
+        const $page = {{ page }}
+        const $a_list = $('.pagination .page a')
+        const $pre = $('.pre')
+        const $next = $('.next')
+        if($page <= 3) {
 
+            for(let i=0; i<5; i++) {
+                $a_list.eq(i).html(i+1).prop({'href': '/?page=' + (i+1)})
+                if(i+1 === $page) {
+                    $a_list.eq(i).parent().addClass('active')
+                }
+            }
 
+        }
+        else {
+
+            $a_list.eq(0).html($page-2).prop({'href': '/?page=' + ($page - 2)})
+            $a_list.eq(1).html($page-1).prop({'href': '/?page=' + ($page - 1)})
+            $a_list.eq(2).html($page).prop({'href': '/?page=' + $page}).parent().addClass('active')
+            $a_list.eq(3).html($page+1).prop({'href': '/?page=' + ($page + 1)})
+            $a_list.eq(4).html($page+2).prop({'href': '/?page=' + ($page + 2)})
+        }
+        $pre.children().prop({'href': '/?page=' + ($page - 1)})
+        $next.children().prop({'href': '/?page=' + ($page + 1)})
+
+        const $items = $('.items .item')
+        const $active = $('.pagination .active')
+        if($items.length < 18) {
+            $active.nextAll().css({'pointerEvents': 'none', 'opacity': '.7'})
+        }
+        if($page === 1) {
+            $a_list.eq(0).parent().prev().css({'pointerEvents': 'none', 'opacity': '.7'})
+        }
+
+        const $jump_input = $('.jumppage input')
+        let jumpNumber = 0
+        $jump_input[0].onkeyup = function () {
+            if(this.value > {{ totalPage }} ) {
+                this.value = {{ totalPage }}
+            }
+            jumpNumber = this.value
+        }
+
+        const $jump_btn = $('.jumppage button')
+        $jump_btn.click(function () {
+            window.location.href = '/?page=' + jumpNumber
+        })
     })
 </script>
 {{ /block }}

@@ -15,28 +15,41 @@ const comment = require('./models/comments')
 router.get('/', (req, res) => {
     /*主要逻辑
     1. 获取数据库中的所有topic信息
-    2. 将topic渲染到页面上并返回给客户端，同时也将登录了的用户信息渲染到导航栏上
+    2. 判断req.query.page是否为空    为空  =>  page=1    为一个数字n  =>   page=n
+    3. 将topics.slice((page-1)*18, page*18)渲染到页面上并返回给客户端，同时将登录了的用户信息渲染到导航栏上渲染到页面上
     * */
-    //获取topic数据，渲染到首页
-    let topics = null
     topic.find((err, data) => {
         if(err) {
-            topics = [{title: '服务器繁忙，请刷新'}]
+            return console.log('请求话题数据失败')
         }
         else {
-            topics = data
+            let page = null
+            if(!req.query.page) {
+                page = 1
+            }
+            else {
+                page = req.query.page
+            }
+            let totalPage = 0
+            if(data.length % 18 === 0) {
+                totalPage = data.length / 18
+            }
+            else {
+                totalPage = Math.floor(data.length / 18) + 1
+            }
+            res.render('index.html', {
+                user: req.session.user,
+                topics: data.reverse().slice( (page-1) * 18, page * 18),
+                page: parseInt(page),
+                totalPage: totalPage
+            })
         }
-        //渲染主页
-        res.render('index.html', {
-            //根据用户信息session，渲染导航栏
-            user: req.session.user,
-            //根据返回的topics渲染首页
-            topics: topics
-        })
+
     })
 
 
 } )
+
 
 //进入登陆界面 √
 router.get('/login', (req, res) => {
