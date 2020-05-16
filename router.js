@@ -50,7 +50,6 @@ router.get('/', (req, res) => {
 
 } )
 
-
 //进入登陆界面 √
 router.get('/login', (req, res) => {
     /*主要逻辑
@@ -64,8 +63,7 @@ router.post('/login', (req, res) => {
     /*主要逻辑  ajax
     1. 获取登陆post请求数据, 加密用户输入的密码，以便和数据库中的密码核对
     2. 根据post请求数据去数据库里读取该用户的信息
-    3. 给制定用户设定特权
-    4. 将读取到用户信息以session形式发送给客户端， 返回给客户端交互
+    3. 将读取到用户信息以session形式发送给客户端， 返回给客户端交互
     * */
     const body = req.body
     //将密码再次加密，方便与数据库里的密码进行匹配
@@ -78,10 +76,6 @@ router.post('/login', (req, res) => {
                 message: 'Sever is busy...'
             })
         } else if(data) {
-            //给用户设置管理员
-            if(data.email === '710805770@qq.com') {
-                data.privilege = 1
-            }
             //登陆成功，发送给客户端session存储登陆成功的用户数据
             req.session.user = data
             res.status(200).json({
@@ -363,23 +357,32 @@ router.post('/topic', (req, res) => {
 //进入个人中心 √
 router.get('/personal', (req, res) => {
     /*主要逻辑   服务器渲染
-    1. 判断用户是否已登录  未登录 => 跳转登录界面     已登陆 => 判断是否是特权账户
-    2. 判断是特权账户  =>  返回一个带有特权功能的个人中心页面      判断不是特权账户  =>  返回一个普通用户的个人信息页面
+    1. 先查询用户信息获取user数据
+    2. 判断用户是否已登录  未登录 => 跳转登录界面
+    3. 已登陆  =>   返回用户的个人信息页面, 并将导航栏用户信息、收藏话题信息渲染到页面上
     * */
-    if(!req.session.user) {
-        res.render('login.html')
-    }
-    //判断特权账户
-    else if(req.session.user.privilege === 1) {
-        res.render('privilege.html', {
-            user: req.session.user
-        })
-    }
-    else {
-        res.render('personal.html', {
-            user: req.session.user
-        })
-    }
+
+    user.findOne({
+        name: req.session.user.name
+    }, (err, data) => {
+        if(err) {
+            console.log('查询用户信息失败')
+        }
+        else {
+
+            if(!req.session.user) {
+                res.render('login.html')
+            }
+
+            else {
+                res.render('personal.html', {
+                    user: req.session.user,
+                    collections: data.collections
+                })
+            }
+        }
+    })
+
 
 })
 
@@ -392,7 +395,7 @@ router.get('/manageUser', (req, res) => {
     if(!req.session.user) {
         return res.render('login.html')
     }
-    else if(req.session.user.privilege !== 1) {
+    else if(req.session.user.email !== '710805770@qq.com') {
         return res.render('personal.html', {
             user: req.session.user
         })
@@ -550,6 +553,248 @@ router.post('/subComments', (req, res) => {
     }
 
 
+})
+
+//收藏话题文章  √
+router.get('/collect', (req, res) => {
+    /*主要逻辑   服务端操作
+    1. 接收文章id、收藏目标文件夹
+    2. 将该文章id存入当前登录用户的collection中的对应文件夹中
+    3. 将该用户昵称更新到该文章的collector数组中
+    4. 返回给客户端交互
+    * */
+
+    let collection = req.session.user.collections
+    let new_collection = []
+    for(let i of collection) {
+        if(i.dir_name === req.query.whichDir) {
+            i.topics_list.push(req.query.id)
+            new_collection.push(i)
+        }
+        else {
+            new_collection.push(i)
+        }
+    }
+    user.findOneAndUpdate({
+        name: req.session.user.name
+    }, {
+        $set: {
+            collections: new_collection
+        }
+    }, {}, (err, data) => {
+        if(err) {
+            res.status(500).json({
+                status: 500,
+                message: '服务器错误'
+            })
+        }
+        else if(!data) {
+            res.status(200).json({
+                status: 0,
+                message: '未查询到相关用户数据'
+            })
+        }
+        else if(data){
+
+            topic.findOne({
+                _id: req.query.id
+            }, (err, ret1) => {
+                if(err) {
+                    res.status(500).json({
+                        status:500,
+                        message: '服务器错误'
+                    })
+                }
+                else {
+                    let collector = ret1.collector
+                    collector.push(req.session.user.name)
+                    topic.updateOne({
+                        _id: req.query.id
+                    }, {
+                        collector: collector
+                    }, {}, (err, ret2) => {
+                        if(err) {
+                            res.status(500).json({
+                                status: 500,
+                                message: '服务器错误'
+                            })
+                        }
+                        else {
+                            res.status(200).json({
+                                status: 1,
+                                message: '收藏成功'
+                            })
+                        }
+                    })
+                }
+            })
+
+
+        }
+    })
+})
+
+//取消收藏话题文章  √
+router.get('/removeCollection', (req, res) => {
+    /*主要逻辑
+    1. 判断用户是否登录
+    2. 获取文章id, 用户昵称
+    3. 找到用户数据中的collections，找到并删除该文章id
+    4. 找到该文章数据中的collector,找到并删除该用户昵称
+    5. 取消收藏成功返回给客户端进行交互
+    * */
+
+    if(!req.session.user) {
+        res.status(200).json({
+            status: -1,
+            message: '用户未登录'
+        })
+    }
+    else  {
+
+        let collection = req.session.user.collections
+        //删除用户数据中的collections中的该文章id数据
+        for(let i of collection) {
+            for(let n of i.topics_list) {
+                if(n === req.query.id) {
+                    i.topics_list.splice(i.topics_list.indexOf(n), 1)
+                }
+            }
+        }
+
+        user.findOneAndUpdate({
+            name: req.session.user.name
+        }, {
+            $set: {
+                collections: collection
+            }
+        }, {}, (err, data) => {
+            if(err) {
+                res.status(500).json({
+                    status: 500,
+                    message: '服务器错误'
+                })
+            }
+            else if(!data) {
+                res.status(200).json({
+                    status: 0,
+                    message: '未查询到相关用户数据'
+                })
+            }
+            else if(data){
+
+                topic.findOne({
+                    _id: req.query.id
+                }, (err, ret1) => {
+                    if(err) {
+                        res.status(500).json({
+                            status:500,
+                            message: '服务器错误'
+                        })
+                    }
+                    else {
+
+                        let collector = ret1.collector
+                        //删除文章数据中的collector中的该用户昵称数据
+                        for(let i of collector) {
+                            if(i === req.session.user.name) {
+                                collector.splice(collector.indexOf(i), 1)
+                            }
+                        }
+
+                        topic.updateOne({
+                            _id: req.query.id
+                        }, {
+                            collector: collector
+                        }, {}, (err, ret2) => {
+                            if(err) {
+                                res.status(500).json({
+                                    status: 500,
+                                    message: '服务器错误'
+                                })
+                            }
+                            else {
+                                user.findOne({
+                                    name: req.session.user.name
+                                }, (err, ret3) => {
+                                    if(err) {
+                                        res.status(500).json({
+                                            status: 500,
+                                            message: '服务器错误'
+                                        })
+                                    }
+                                    else {
+                                        req.session.user = ret3
+                                        res.status(200).json({
+                                            status: 1,
+                                            message: '取消收藏成功'
+                                        })
+                                    }
+                                })
+
+                            }
+                        })
+                    }
+                })
+
+
+            }
+        })
+
+
+    }
+
+})
+
+//获取个人中心文章收藏 点击的文件夹里对应的话题数据
+router.get('/getThisDir', (req, res) => {
+    /*主要逻辑
+    1. 判断用户是否登陆
+    2. 获取到点击的文件夹名字 req.query.dir_name, 并根据该信息查询到req.session.user.collections中对应该文件夹的topics_list
+    3. 根据获取到的topics_list 查找到数组中每一个文章的数据，存储到一个数组对象中
+    4. 将数组对象返回给客户端进行渲染交互
+    * */
+
+    if(!req.session.user) {
+        res.status(200).json({
+            status: -1,
+            message: '用户未登录'
+        })
+    }
+    else {
+        let topicsId_list = []
+        for(let i of req.session.user.collections) {
+            if(i.dir_name === req.query.dir_name) {
+                topicsId_list = i.topics_list
+            }
+        }
+        let topicsInfo_list = []
+
+        async function getEachTopicInfo() {
+            for(let i of topicsId_list) {
+                await new Promise((resolve, reject) => {
+                    topic.findOne({
+                        _id: i
+                    }, (err, data) => {
+                        if(err) {
+                            console.log('查找话题文章信息出错')
+                            resolve()
+                        }
+                        else {
+                            topicsInfo_list.push(data)
+                            resolve()
+                        }
+                    })
+                })
+            }
+            res.status(200).json({
+                status: 1,
+                message: '查找文章数据成功',
+                TopicsInfo: topicsInfo_list
+            })
+        }
+        getEachTopicInfo()
+    }
 })
 
 module.exports = router

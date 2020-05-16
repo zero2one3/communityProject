@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const Topics =  mongoose.createConnection('mongodb://localhost/topics')
+//处理报错信息
+mongoose.set('useFindAndModify', false)
 
 const topicSchema = new Schema({
     //话题标题
@@ -37,17 +39,27 @@ const topicSchema = new Schema({
     //话题类型
     type: {
         type: String,
-        required: true
+        required: true,
+        default: '分享'
     },
-    //点赞数
+    //点赞的人
     like: {
-        type: Number,
-        default: 0
+        type: Array,
+        default: []
+    },
+    //收藏的人
+    collector: {
+        type: Array,
+        default: []
     }
 })
 
 module.exports = Topics.model('Topic', topicSchema)
+
+
+
 // a = Topics.model('Topic', topicSchema)
 // a.find((err, data) => {
 //     console.log(data)
 // })
+

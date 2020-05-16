@@ -3,6 +3,8 @@ const Scheme = mongoose.Schema
 
 mongoose.connect('mongodb://localhost/user')
 
+mongoose.set('useFindAndModify', false)
+
 const userScheme = new Scheme({
     //邮箱账号
     email: {
@@ -51,15 +53,15 @@ const userScheme = new Scheme({
         type: String,
         required: true
     },
-    //给予管理系统特权
-    privilege: {
-        type: Number,
-        default: 0
-    },
     //收藏的话题文章id
     collections: {
         type: Array,
-        default: []
+        default: [
+            {
+                "dir_name": '默认文件夹',
+                topics_list: []
+            }
+        ]
     },
     //关注的用户
     watch: {
@@ -72,15 +74,29 @@ module.exports = mongoose.model('User', userScheme)
 
 
 // user =  mongoose.model('User', userScheme)
-// user.find((err, data) => {
+// user.find({
+//     name: '111'
+// }, (err, data) => {
 //     if(err) {
 //         console.log('查询失败')
 //     }
 //     else {
 //         console.log('查询成功')
-//         console.log(data)
+//         console.log(data[0].collections)
+//
+//
 //     }
 // })
 
 
+
+// user.update({
+//     name: '111'
+// },{
+//     $set: {
+//         collections: yy
+//     }
+// }, {}, (err, data) => {
+//     console.log(data)
+// })
 

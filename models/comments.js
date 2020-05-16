@@ -3,6 +3,8 @@ const Schema = mongoose.Schema
 
 const Comments = mongoose.createConnection('mongodb://localhost/comments')
 
+mongoose.set('useFindAndModify', false)
+
 const commentSchema = new Schema({
     //评论归属
     belong: {

@@ -63,6 +63,13 @@
         background: #80bd01;
         margin-right: 10px;
     }
+    .top-title .topicInfo .hasCollect{
+        float: right;
+        color: #999;
+        background: #eee;
+        margin-right: 10px;
+    }
+
     .content{
         padding: 30px 20px;
         background: #fff;
@@ -172,6 +179,124 @@
     .submit{
         margin-left: 20px;
     }
+    .select-dirType{
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    .select-dirType .bg{
+        background: #000;
+        opacity: .2;
+        width: 100%;
+        height: 100%;
+    }
+    .select-dirType .box{
+        width: 400px;
+        height: 400px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        z-index: 10;
+        border-radius: 10px;
+    }
+    .select-dirType .box .TX{
+        width: 100%;
+        height: 20%;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .select-dirType .box .my-dir-list{
+        width: 100%;
+        height: 60%;
+        border-bottom: 1px solid #e0e0e0;
+        padding: 15px;
+        overflow: auto;
+    }
+    .my-dir-list ul{
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+    .my-dir-list ul li{
+        width: 100%;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+    .my-dir-list li .dir-name{
+        font-size: 14px;
+        color: #4d4d4d;
+    }
+    .my-dir-list li .content-count{
+        font-size: 12px;
+        color: #999aaa;
+        margin-left: 10px;
+    }
+    .my-dir-list li .add-into{
+        display: inline-block;
+        font-size: 14px;
+        color: #e33e33;
+        position: absolute;
+        right: 10px;
+        border: 1px solid #e33e33;
+        padding: 4px 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .select-dirType .box .creat-new-dir{
+        width: 100%;
+        height: 20%;
+    }
+    .box .creat-new-dir{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .add-collection{
+        width: 100%;
+        height: 60%;
+        text-align: center;
+        position: relative;
+    }
+    .add-collection .addTo{
+        font-size: 16px;
+        color: #3d3d3d;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .add-collection .close{
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translate(0, -50%);
+    }
+    .moretx{
+        width: 100%;
+        height: 40%;
+    }
+    .moretx span{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        color: #999aaa;
+    }
+    .my-dir-list ul .no-login{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
 {{ /block }}
 
@@ -187,8 +312,12 @@
             <div class="topicInfo">
                 <span class="pubTime">发布于{{ topics.publish_time }}</span>
                 <span class="author">作者&nbsp;{{ topics.author_name }}</span>
-                <span class="start">点赞数&nbsp;{{ topics.like }}</span>
-                <a class="collection btn">收藏</a>
+                <span class="start">点赞数&nbsp;{{ topics.like.length }}</span>
+
+                <a class="collection btn" href="">收藏</a>
+
+                <a href="" class="hasCollect btn">已收藏</a>
+
             </div>
         </div>
 
@@ -248,14 +377,57 @@
     <div class="content-r"></div>
 
 </div>
+<div class="select-dirType">
+
+    <div class="box">
+
+        <div class="TX">
+            <div class="add-collection">
+                <span class="addTo">添加收藏</span>
+                <span class="close">x</span>
+            </div>
+            <div class="moretx">
+                <span>请选择你想添加的收藏夹</span>
+            </div>
+        </div>
+
+        <div class="my-dir-list">
+            <ul>
+                {{ if user }}
+                {{ each user.collections }}
+                <li>
+                    <span class="dir-name">{{ $value.dir_name }}</span>
+                    <span class="content-count">{{ $value.topics_list.length }}条内容</span>
+                    <span class="add-into">收藏</span>
+                </li>
+                {{ /each }}
+                {{ else }}
+                <div class="no-login">请先登录账号</div>
+                {{ /if }}
+
+            </ul>
+        </div>
+
+        <div class="creat-new-dir">
+            <button type="button" class="btn btn-danger creatDir-btn">+&nbsp;新建文件夹</button>
+        </div>
+
+    </div>
+
+    <div class="bg"></div>
+</div>
 {{ /block }}
 
 {{ block 'script' }}
 <script>
     $(function () {
+        //提交评论按钮
         const $submit = $('.submit')
+        //文章Id
         const $id = $('#id')[0].value
+        //文章作者的名字
         const $name = '{{ topics.author_name }}'
+        //处理发送评论提交
         $submit.click(function (e) {
             e.preventDefault()
             const $content = $('#content')[0].value
@@ -285,6 +457,93 @@
             }
 
         })
+
+        const $dir_alert = $('.select-dirType')
+        $dir_alert.hide()
+        const $collect_btn = $('.collection')
+        const $has_collect_btn =$('.hasCollect')
+        const $close_dir_alert = $('.select-dirType .close')
+        const $dir_alert_bg = $('.select-dirType .bg')
+        //处理点击收藏后弹出的提示框的关闭功能
+        $collect_btn.click(function (e) {
+            e.preventDefault()
+            $dir_alert.show()
+        })
+        $close_dir_alert.click(function () {
+            $dir_alert.hide()
+        })
+        $dir_alert_bg.click(function () {
+            $dir_alert.hide()
+        })
+        //判断该用户是否收藏过该文章，是显示收藏按钮还是取消收藏按钮
+        if( {{ !user }} ) {
+            $has_collect_btn.hide()
+        }
+        {{ if user }}
+        else if( {{ topics.collector.indexOf(user.name) === -1 }} ) {
+            $has_collect_btn.hide()
+        }
+        {{ /if }}
+        else {
+            $collect_btn.hide()
+        }
+
+        const $true_collect_btn = $('.my-dir-list .add-into')
+        //处理收藏文章点击事件
+        $true_collect_btn.click(function (e) {
+            e.preventDefault()
+            const $formdata = 'id=' + $id + '&whichDir=' + $(this).prev().prev().html()
+            $.ajax({
+                url: '/collect',
+                type: 'get',
+                dataType: 'json',
+                data: $formdata,
+                success: function (data) {
+                    if(data.status === 500) {
+                        return window.alert('服务器繁忙，请稍后重试')
+                    }
+                    else if(data.status === 0) {
+                        return window.alert('收藏失败')
+                    }
+                    else if(data.status === 1) {
+                        window.alert('收藏成功')
+                        $collect_btn.hide()
+                        $has_collect_btn.show()
+                        $dir_alert.hide()
+                    }
+                }
+            })
+        })
+
+        //处理取消收藏文章点击事件
+        $has_collect_btn.click(function (e) {
+            e.preventDefault()
+            const $formdata = 'id=' + $id
+            $.ajax({
+                url: '/removeCollection',
+                type: 'get',
+                dataType: 'json',
+                data: $formdata,
+                success: function (data) {
+                    if(data.status === 500) {
+                        return window.alert('服务器繁忙，请稍后重试')
+                    }
+                    else if(data.status === 0) {
+                        return window.alert('取消收藏失败')
+                    }
+                    else if(data.status === -1) {
+                        return window.alert('请先登录账号')
+                    }
+                    else if(data.status === 1) {
+                        window.alert('取消收藏成功')
+                        $collect_btn.show()
+                        $has_collect_btn.hide()
+                    }
+                }
+            })
+        })
+
+
     })
 </script>
 
