@@ -296,3 +296,172 @@ body{
     justify-content: center;
     margin-top: 50px;
 }
+.new-dir-alert{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.new-dir-alert .bg{
+    background: #000;
+    opacity: .2;
+    width: 100%;
+    height: 100%;
+}
+.new-dir-alert .box{
+    width: 400px;
+    height: 200px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    z-index: 10;
+    border-radius: 5px;
+}
+.new-dir-alert-title{
+    width: 100%;
+    height: 20%;
+    border-bottom: 1px solid #e0e0e0;
+    color: #000;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+}
+.new-dir-alert-btn{
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.new-dir-alert-content{
+    width: 100%;
+    height: 60%;
+}
+
+.new-dir-alert-btn .no{
+    font-size: 14px;
+    color: #4d4d4d;
+    margin-left: 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.new-dir-alert-btn .sure{
+    font-size: 14px;
+    color: #ca0c16;
+    margin-right: 15px;
+    margin-left: 20px;
+    font-weight: 600;
+    cursor: pointer;
+
+}
+.new-dir-alert-content .form-group{
+    height: 100%;
+    padding: 20px 20px;
+}
+
+.has-del-dir{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.has-del-dir .box{
+    width: 400px;
+    height: 250px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -70%);
+    background: #fff;
+    z-index: 10;
+    border-radius: 5px;
+}
+
+.has-del-dir .bg{
+    background: #000;
+    opacity: .2;
+    width: 100%;
+    height: 100%;
+}
+
+.has-del-dir-title{
+    width: 100%;
+    height: 20%;
+    border-bottom: 1px solid #e0e0e0;
+    color: #000;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+}
+
+.has-del-dir-content{
+    width: 100%;
+    height: 65%;
+    padding: 20px 15px;
+}
+
+.has-del-dir-content div{
+    width: 100%;
+    display: flex;
+    height: 50%;
+
+}
+.has-del-dir-content .info span:nth-child(1){
+    display: inline-block;
+    width: 15%;
+    color: red;
+}
+.has-del-dir-content .info span:nth-child(2){
+    display: inline-block;
+    width: 85%;
+}
+.has-del-dir-content .remind{
+    color: red;
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
+
+
+
+
+.has-del-dir-btn{
+    width: 100%;
+    height: 15%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.has-del-dir-btn .no{
+    font-size: 14px;
+    color: #4d4d4d;
+    margin-left: 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.has-del-dir-btn .sure{
+    font-size: 14px;
+    color: #ca0c16;
+    margin-right: 15px;
+    margin-left: 20px;
+    font-weight: 600;
+    cursor: pointer;
+
+}

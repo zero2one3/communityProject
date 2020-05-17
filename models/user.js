@@ -58,7 +58,7 @@ const userScheme = new Scheme({
         type: Array,
         default: [
             {
-                "dir_name": '默认文件夹',
+                dir_name: '默认文件夹',
                 topics_list: []
             }
         ]

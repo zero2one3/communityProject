@@ -357,31 +357,30 @@ router.post('/topic', (req, res) => {
 //进入个人中心 √
 router.get('/personal', (req, res) => {
     /*主要逻辑   服务器渲染
-    1. 先查询用户信息获取user数据
-    2. 判断用户是否已登录  未登录 => 跳转登录界面
+
+    1. 判断用户是否已登录  未登录 => 跳转登录界面
+    2. 先查询用户信息获取user数据
     3. 已登陆  =>   返回用户的个人信息页面, 并将导航栏用户信息、收藏话题信息渲染到页面上
     * */
-
-    user.findOne({
-        name: req.session.user.name
-    }, (err, data) => {
-        if(err) {
-            console.log('查询用户信息失败')
-        }
-        else {
-
-            if(!req.session.user) {
-                res.render('login.html')
+    if(!req.session.user) {
+        res.render('login.html')
+    }
+    else {
+        user.findOne({
+            name: req.session.user.name
+        }, (err, data) => {
+            if(err) {
+                console.log('查询用户信息失败')
             }
-
             else {
                 res.render('personal.html', {
                     user: req.session.user,
                     collections: data.collections
                 })
             }
-        }
-    })
+        })
+    }
+
 
 
 })
@@ -579,7 +578,8 @@ router.get('/collect', (req, res) => {
         name: req.session.user.name
     }, {
         $set: {
-            collections: new_collection
+            collections: new_collection,
+            last_modifyTime: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
         }
     }, {}, (err, data) => {
         if(err) {
@@ -666,7 +666,8 @@ router.get('/removeCollection', (req, res) => {
             name: req.session.user.name
         }, {
             $set: {
-                collections: collection
+                collections: collection,
+                last_modifyTime: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
             }
         }, {}, (err, data) => {
             if(err) {
@@ -794,6 +795,167 @@ router.get('/getThisDir', (req, res) => {
             })
         }
         getEachTopicInfo()
+    }
+})
+
+//新建个人中心收藏文件夹   √
+router.get('/creatNewDir', (req, res) => {
+    /*主要逻辑 ajax
+    1. 判断用户是否登录
+    2. 获取用户名称，去数据中找到该用户信息
+    3. 查看文件夹名是否已存在
+    4. 获取客户端传过来的dir_name,更新该用户信息中的collections ， push进去一个 {dir_name: 新建的文件名, topics_list: []}
+    5. 更新该用户的collections
+    6. 返还给客户端页面刷新
+    * */
+    if(!req.session.user) {
+        res.status(200).json({
+            status: -1,
+            message: '用户未登陆'
+        })
+    }
+    else {
+        user.findOne({
+            name: req.session.user.name
+        }, (err, data) => {
+            if(err) {
+                res.status(500).json({
+                    status: 500,
+                    message: '服务器错误'
+                })
+            }
+            else {
+                let collections = data.collections
+                for(let i of collections) {
+                    if(i.dir_name === req.query.dir_name) {
+                        return res.status(200).json({
+                            status: 2,
+                            message: '文件夹已存在'
+                        })
+                    }
+                }
+                const new_dir = {dir_name: req.query.dir_name, topics_list: []}
+                collections.push(new_dir)
+
+                user.findOneAndUpdate({
+                    name: req.session.user.name
+                }, {
+                    $set: {
+                        collections: collections,
+                        last_modifyTime: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
+                    }
+                }, {}, (err, ret) => {
+                    if(err) {
+                        res.status(500).json({
+                            status: 500,
+                            message: '服务器错误'
+                        })
+                    }
+                    else if(!ret) {
+                        res.status(200).json({
+                            status: 0,
+                            message: '未查找到相关用户'
+                        })
+                    }
+                    else {
+                        res.status(200).json({
+                            status: 1,
+                            message: '更新成功',
+                            data: new_dir
+                        })
+                    }
+                })
+            }
+        })
+    }
+})
+
+//个人中心收藏文件夹的删除  √
+router.get('/delMyDir', (req, res) => {
+    /*主要逻辑
+    1. 判断用户是否登录
+    2. 获取删除的文件夹名
+    3. 获取该用户的user信息，找到collections中的该文件夹名，进行删除,并且将该文件夹中收藏的话题中的文章的collector数组中去除
+    4. 返回给客户端交互
+    * */
+    if(!req.session.user) {
+        res.status(200).json({
+            status: -1,
+            message: '用户未登陆'
+        })
+    }
+    else {
+
+        user.findOne({
+            name: req.session.user.name
+        }, (err, data) => {
+            if(err) {
+                res.status(500).json({
+                    status: 500,
+                    message: '服务器错误'
+                })
+            }
+            else {
+
+                let collections = data.collections
+
+                for(let i of collections) {
+                    if(i.dir_name === req.query.dir_name) {
+                        //删除该用户在各个话题中的收藏名
+                        for(let t of i.topics_list) {
+                            topic.findOne({
+                                _id: t
+                            }, (err, ret1) => {
+                                let collector = ret1.collector
+                                collector.splice(collector.findIndex(s => s === req.session.user.name), 1)
+
+                                topic.findOneAndUpdate({
+                                    _id: t
+                                },{
+                                    $set: {
+                                        collector: collector
+                                    }
+                                }, {}, (err, ret2) => {
+                                    if(err) {
+                                        return res.status(500).json({
+                                            status: 500,
+                                            message: '服务器错误'
+                                        })
+                                    }
+                                })
+                            })
+
+                        }
+                        //删除对应的文件夹
+                        collections.splice(collections.indexOf(i), 1)
+                        user.findOneAndUpdate({
+                            name: req.session.user.name
+                        }, {
+                            $set: {
+                                collections: collections,
+                                last_modifyTime: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
+                            }
+                        }, {}, (err, ret3) => {
+                            if(err) {
+                                return res.status(500).json({
+                                    status: 500,
+                                    message: '服务器错误'
+                                })
+                            }
+                            else {
+                                req.session.user.collections = collections
+                                return res.status(200).json({
+                                    status: 1,
+                                    message: '删除文件夹成功'
+                                })
+                            }
+                        })
+
+                    }
+                }
+
+            }
+        })
     }
 })
 

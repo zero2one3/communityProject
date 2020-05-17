@@ -60,7 +60,7 @@
                 <div class="dir-list">
                     <ul>
                         {{ each collections }}
-                        <li>
+                        <li class="dir-li-list">
                             <div class="dir-name"><span>{{ $value.dir_name }}</span></div>
                             <div class="content-count"><span>{{ $value.topics_list.length }}条内容</span></div>
                             <div class="in-dir"><img src="/public/img/rightJT.png" alt=""></div>
@@ -70,6 +70,7 @@
                 </div>
 
                 <div class="detail-dir">
+                    <input type="hidden">
                     <div class="back-to-dirlist">
                         <div>
                             <img src="/public/img/leftJT.png" alt="">
@@ -103,9 +104,9 @@
                                 </div>
 
                                 <div class="topic-info">
-                                    <span class="topic-info-author">Lpyexolore</span>
+                                    <span class="topic-info-author"></span>
                                     <span>|</span>
-                                    <span class="topic-info-pubtime">2020-11-03 21:21:36</span>
+                                    <span class="topic-info-pubtime"></span>
                                 </div>
                                 <input type="hidden" value="">
 
@@ -125,6 +126,41 @@
         </div>
 
     </div>
+</div>
+<div class="new-dir-alert">
+    <div class="box">
+        <div class="new-dir-alert-title">新建收藏文件夹</div>
+
+        <div class="new-dir-alert-content">
+            <div class="form-group">
+                <label for="dir_name">文件夹名称</label>
+                <input type="text" class="form-control" id="dir_name" placeholder="输入新建文件夹名称">
+            </div>
+        </div>
+
+        <div class="new-dir-alert-btn">
+            <span class="no">取消</span>
+            <span class="sure">确认</span>
+        </div>
+    </div>
+    <div class="bg"></div>
+</div>
+<div class="has-del-dir">
+    <div class="box">
+        <div class="has-del-dir-title">删除文件夹</div>
+        <div class="has-del-dir-content">
+            <div class="info">
+                <span>提醒：</span>
+                <span>删除该文件夹后，文件夹内收藏的话题文章也将一并删除（删除操作不可恢复！）</span>
+            </div>
+            <div class="remind"><span>是否确认删除</span></div>
+        </div>
+        <div class="has-del-dir-btn">
+            <span class="no">取消</span>
+            <span class="sure">确认</span>
+        </div>
+    </div>
+    <div class="bg"></div>
 </div>
 {{ /block }}
 
