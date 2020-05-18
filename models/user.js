@@ -75,14 +75,14 @@ module.exports = mongoose.model('User', userScheme)
 
 // user =  mongoose.model('User', userScheme)
 // user.find({
-//     name: '111'
+//     name: '333'
 // }, (err, data) => {
 //     if(err) {
 //         console.log('查询失败')
 //     }
 //     else {
 //         console.log('查询成功')
-//         console.log(data[0].collections)
+//         console.log(data)
 //
 //
 //     }

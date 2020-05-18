@@ -858,6 +858,8 @@ router.get('/creatNewDir', (req, res) => {
                         })
                     }
                     else {
+                        //解决个人中心新建文件夹后，话题详情页不显示新建文件夹的bug
+                        req.session.user.collections = collections
                         res.status(200).json({
                             status: 1,
                             message: '更新成功',
@@ -959,6 +961,75 @@ router.get('/delMyDir', (req, res) => {
     }
 })
 
+//个人中心提交修改个人信息   √
+router.get('/editUserInfo', (req, res) => {
+    /*主要逻辑   ajax
+    1. 判断用户是否登陆
+    2. 获取修改的信息：name gender introduce
+    3. 判断用户名是否已存在
+    4. 找到该用户数据并更新，同时更新  last_modifyTime
+    5. 返回给客户端交互
+    * */
 
+    //判断是否登录
+    if(!req.session.user) {
+        res.status(200).json({
+            status: -1,
+            message: '用户未登录'
+        })
+    }
+    else {
+        //判断用户名是否存在
+        user.findOne({
+            name: req.query.name
+        }, (err, data) => {
+            if(err) {
+                res.status(500).json({
+                    status: 500,
+                    message: '服务器错误'
+                })
+            }
+            else if(data && data.name !== req.query.name) {
+                res.status(200).json({
+                    status: 0,
+                    message: '用户名已存在'
+                })
+            }
+            else {
+                //更新用户数据
+                user.findOneAndUpdate({
+                    name: req.session.user.name
+                }, {
+                    $set: {
+                        name: req.query.name,
+                        gender: req.query.gender,
+                        introduce: req.query.introduce,
+                        last_modifyTime: moment(new Date).format('YYYY-MM-DD HH:mm:ss')
+                    }
+                }, {}, (err, ret) => {
+                    if(err) {
+                        res.status(500).json({
+                            status: 500,
+                            message: '服务器错误'
+                        })
+                    }
+                    else {
+                        //修改此时的用户登录信息
+                        req.session.user.name = req.query.name
+                        req.session.user.gender = req.query.gender
+                        req.session.user.introduce = req.query.introduce
+                        req.session.user.last_modifyTime = moment(new Date).format('YYYY-MM-DD HH:mm:ss')
+                        res.status(200).json({
+                            status: 1,
+                            message: '修改成功',
+                            data: req.session.user
+                        })
+                    }
+                })
+            }
+        })
+
+    }
+})
 
 module.exports = router

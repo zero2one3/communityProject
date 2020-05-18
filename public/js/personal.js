@@ -12,24 +12,116 @@ $(function () {
     /* --------------------------------------------------------------------  */
 
     /* ---------------------------  个人信息页面js ----------------------------*/
-    const $gender = $('.gender-span')
-    const $intro = $('.intro-span')
-    //判断性别
-    switch (parseInt($gender.html())) {
-        case -1:
-            $gender.html('保密')
-            break
-        case 0:
-            $gender.html('男')
-            break
-        case 1:
-            $gender.html('女')
-    }
-    //判断简介内容是否为空
-    if(!$intro.html()) {
-        $intro.html('无')
+    //将个人信息进行一定的转化
+    function info_transform() {
+        const $gender = $('.gender-span')
+        const $intro = $('.intro-span')
+        //判断性别
+        switch (parseInt($gender.html())) {
+            case -1:
+                $gender.html('保密')
+                break
+            case 0:
+                $gender.html('男')
+                break
+            case 1:
+                $gender.html('女')
+        }
+        //判断简介内容是否为空
+        if(!$intro.html()) {
+            $intro.html('无')
+        }
     }
 
+    info_transform()
+
+    //监听编辑信息的点击
+    const $no_edit = $('.no-edit')
+    const $in_edit = $('.in-edit')
+    const $edit_btn = $('.info-content .edit-btn')
+    $in_edit.hide()
+    const $edit_personal_info = $('.edit-personal-info')
+    //监听编辑信息的点击
+    $edit_personal_info.click(function (e) {
+        e.preventDefault()
+        if($(this).html() === '编辑信息') {
+            $no_edit.hide()
+            $in_edit.show()
+            $(this).html('退出编辑').removeClass('btn-info').addClass('btn-danger')
+            const $name = $('#name')
+            const $gender = $('#gender')
+            const $introduce = $('#introduce')
+            $name.prop({'value': $name.prev().html()})
+            switch ($gender.prev().html()) {
+                case '保密':
+                    $gender.prop({'value': -1})
+                    break
+                case '男':
+                    $gender.prop({'value': 0})
+                    break
+                case '女':
+                    $gender.prop({'value': 1})
+                    break
+            }
+            if($introduce.prev().html() !== '无') {
+                $introduce.prop({'value': $introduce.prev().html()})
+            }
+        }
+        else if($(this).html() === '退出编辑') {
+            $in_edit.hide()
+            $no_edit.show()
+            $(this).html('编辑信息').removeClass('btn-danger').addClass('btn-info')
+        }
+
+    })
+
+    //监听提交修改个人信息按钮的点击
+    $edit_btn.click(function () {
+        const $name = $('.info-content #name')
+        const $gender = $('.info-content #gender')
+        const $introduce = $('.info-content #introduce')
+        const $formdata = 'name=' + $name.prop('value') + '&gender=' + $gender.prop('value') + '&introduce=' + $introduce.prop('value')
+
+        $.ajax({
+            url: '/editUserInfo',
+            type: 'get',
+            dataType: 'json',
+            data: $formdata
+        })
+        .done(function (data) {
+            if(data.status === 500) {
+                return window.alert('服务器繁忙，请稍后重试')
+            }
+            else if(data.status === -1) {
+                window.alert('请先登录账号')
+                return window.location.href = '/login'
+            }
+            else if(data.status === 0) {
+                return window.alert('用户名已存在，请重新修改')
+            }
+            else if(data.status === 1) {
+                window.alert('个人信息修改成功')
+                //修改成功，退出编辑模式
+                $in_edit.hide()
+                $no_edit.show()
+                $edit_personal_info.html('编辑信息').removeClass('btn-danger').addClass('btn-info')
+                //更新新修改好的个人信息
+                const $new_name = $('.info-content .name-span')
+                const $new_gender = $('.info-content .gender-span')
+                const $new_intro = $('.info-content .intro-span')
+                const $new_modify_time = $('.info-content .modify-time-span')
+                const $box_l_user_name = $('.box-l .user-name')
+                const $nav_user_name = $('.navbar .nav .navbar-user-name')
+                $new_name.html(data.data.name)
+                $new_gender.html(data.data.gender)
+                $new_intro.html(data.data.introduce)
+                $new_modify_time.html(data.last_modifyTime)
+                info_transform()
+                $box_l_user_name.children().html(data.data.name)
+                $nav_user_name.html(data.data.name)
+            }
+        })
+    })
 
     /* --------------------------------------------------------------------  */
 

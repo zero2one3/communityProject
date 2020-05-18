@@ -84,6 +84,28 @@ body{
     padding: 30px 0;
     font-size: 17px;
 }
+.info-content #name{
+    display: inline-block;
+    width: 50%;
+}
+.info-content #gender{
+    display: inline-block;
+    width: 15%;
+}
+.info-content .intro-box{
+    display: inline-block;
+    width: 100%;
+}
+.info-content #introduce{
+    display: inline-block;
+    width: 50%;
+    height: 200px;
+    resize: none;
+}
+.info-content .edit-btn{
+    width: 200px;
+    margin: 20px auto;
+}
 .collection-content{
     width: 100%;
     display: inline-block;

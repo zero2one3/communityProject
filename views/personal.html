@@ -22,7 +22,7 @@
             <img src="/public/img/email.png" alt="">
             <span>{{ user.email }}</span>
         </div>
-        <a href="#" class="btn btn-info">编辑信息</a>
+        <a href="" class="btn btn-info edit-personal-info">编辑信息</a>
     </div>
 
     <div class="box-r">
@@ -38,13 +38,42 @@
 
         <div class="content">
             <div class="info-content">
-                <div><span>昵称：&nbsp;&nbsp;</span><span>{{ user.name }}</span></div>
-                <div><span>i&nbsp;d：&nbsp;&nbsp;</span><span>{{ user._id }}</span></div>
-                <div><span>邮箱：&nbsp;&nbsp;</span><span>{{ user.email }}</span></div>
-                <div><span>性别：&nbsp;&nbsp;</span><span class="gender-span">{{ user.gender }}</span></div>
-                <div><span>简介：&nbsp;&nbsp;</span><span class="intro-span">{{ user.introduce }}</span></div>
-                <div><span>注册时间：&nbsp;&nbsp;</span><span>{{ user.register_time }}</span></div>
-                <div><span>最后一次修改信息时间：&nbsp;&nbsp;</span><span>{{ user.last_modifyTime }}</span></div>
+                <div>
+                    <span>昵称：&nbsp;&nbsp;</span>
+                    <span class="no-edit name-span">{{ user.name }}</span>
+                    <input type="text" class="form-control in-edit" id="name">
+                </div>
+                <div>
+                    <span>i&nbsp;d：&nbsp;&nbsp;</span>
+                    <span>{{ user._id }}</span>
+                </div>
+                <div>
+                    <span>邮箱：&nbsp;&nbsp;</span>
+                    <span>{{ user.email }}</span>
+                </div>
+                <div>
+                    <span>性别：&nbsp;&nbsp;</span>
+                    <span class="gender-span no-edit">{{ user.gender }}</span>
+                    <select name="gender" id="gender" class="form-control in-edit">
+                        <option value="-1">保密</option>
+                        <option value="0">男</option>
+                        <option value="1">女</option>
+                    </select>
+                </div>
+                <div class="intro-box">
+                    <span>简介：&nbsp;&nbsp;</span>
+                    <span class="intro-span no-edit">{{ user.introduce }}</span>
+                    <textarea name="" id="introduce"  class="in-edit form-control"></textarea>
+                </div>
+                <div>
+                    <span>注册时间：&nbsp;&nbsp;</span>
+                    <span>{{ user.register_time }}</span>
+                </div>
+                <div>
+                    <span>最后一次修改信息时间：&nbsp;&nbsp;</span>
+                    <span class="modify-time-span">{{ user.last_modifyTime }}</span>
+                </div>
+                <button class="edit-btn btn btn-primary in-edit">提交修改</button>
             </div>
 
 
