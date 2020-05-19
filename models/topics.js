@@ -51,6 +51,11 @@ const topicSchema = new Schema({
     collector: {
         type: Array,
         default: []
+    },
+    //评论数
+    comments_count: {
+        type: Number,
+        default: 0
     }
 })
 

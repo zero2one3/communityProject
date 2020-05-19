@@ -543,10 +543,41 @@ router.post('/subComments', (req, res) => {
                 })
             }
             else {
-                res.status(200).json({
-                    status: 1,
-                    message: '评论存储成功'
+                topic.findOne({
+                    _id: req.body.id
+                }, (err, ret1) => {
+                    if(err) {
+                        res.status(500).json({
+                            status: 500,
+                            message: '服务器错误'
+                        })
+                    }
+                    else {
+                        let comments_count = ret1.comments_count
+                        comments_count ++
+                        topic.findOneAndUpdate({
+                            _id:  req.body.id
+                        }, {
+                            $set: {
+                                comments_count: comments_count
+                            }
+                        }, {}, (err, ret2) => {
+                            if(err) {
+                                res.status(500).json({
+                                    status: 500,
+                                    message: '服务器错误'
+                                })
+                            }
+                            else {
+                                res.status(200).json({
+                                    status: 1,
+                                    message: '评论存储成功'
+                                })
+                            }
+                        })
+                    }
                 })
+
             }
         })
     }
@@ -989,7 +1020,7 @@ router.get('/editUserInfo', (req, res) => {
                     message: '服务器错误'
                 })
             }
-            else if(data && data.name !== req.query.name) {
+            else if(data && data.name !== req.session.user.name) {
                 res.status(200).json({
                     status: 0,
                     message: '用户名已存在'
@@ -1029,6 +1060,73 @@ router.get('/editUserInfo', (req, res) => {
             }
         })
 
+    }
+})
+
+//获取个人中心我的话题信息   √
+router.get('/getMytopics', (req, res) => {
+    /*主要逻辑
+    1. 判断用户是否登录
+    2. 根据用户信息查询到topics数据库中属于该用户的话题数据
+    3. 返回给客户端交互
+    * */
+    if(!req.session.user) {
+        res.status(200).json({
+            status: -1,
+            message: '用户未登录'
+        })
+    }
+    else {
+        topic.find({
+            author_name: req.session.user.name
+        }, (err, data) => {
+            if(err) {
+                res.status(500).json({
+                    status: 500,
+                    message: '服务器错误'
+                })
+            }
+            else {
+                res.status(200).json({
+                    status: 1,
+                    message: '查询该用户话题信息成功',
+                    data: data.reverse()
+                })
+            }
+        })
+    }
+})
+
+//话题文章发表者删除自己发表的话题
+router.get('/delMytopics', (req, res) => {
+    /*主要逻辑  ajax
+    1. 判断用户是否登录
+    2. 根据req.query.id 找到topic数据库中对应的该文章，并进行删除
+    3. 返回给客户端交互
+    * */
+    if(!req.session.user) {
+        res.status(200).json({
+            status: -1,
+            message: '用户未登录'
+        })
+    }
+    else {
+        topic.findOneAndRemove({
+            _id: req.query.id
+        },{}, (err, data) => {
+            if(err) {
+                res.status(500).json({
+                    status: 500,
+                    message: '服务器错误'
+                })
+            }
+            else {
+                res.status(200).json({
+                    status: 1,
+                    message: '删除话题成功'
+                })
+            }
+        })
     }
 })
 

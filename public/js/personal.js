@@ -9,6 +9,7 @@ $(function () {
         $(this).addClass('active').siblings().removeClass('active')
         $content.eq($(this).index()).show().siblings().hide()
     })
+
     /* --------------------------------------------------------------------  */
 
     /* ---------------------------  个人信息页面js ----------------------------*/
@@ -419,7 +420,6 @@ $(function () {
 
     const $new_dir = $('.new-dir')
     const $new_dir_alert = $('.new-dir-alert')
-    $new_dir_alert.hide()
     //监听新建文件夹按钮的点击
     $new_dir.click(function () {
         $new_dir_alert.show()
@@ -484,7 +484,6 @@ $(function () {
 
     //监听删除收藏文件夹的提醒框的关闭点击
     const $has_del_dir = $('.has-del-dir')
-    $has_del_dir.hide()
     const $has_del_dir_bg = $('.has-del-dir .bg')
     $has_del_dir_bg.click(function () {
         $has_del_dir.hide()
@@ -536,6 +535,137 @@ $(function () {
 
     /* --------------------------------------------------------------------  */
 
+    /* ---------------------------  我的话题页面js ----------------------------*/
+
+    //监听删除话题文章按钮的点击后提醒框的点击取消
+    const $del_my_topic_alert = $('.del-my-topic-alert')
+    const $del_my_topic_alert_no = $('.del-my-topic-alert .no')
+    const $del_my_topic_alert_bg = $('.del-my-topic-alert .bg')
+    const $del_my_topic_alert_sure = $('.del-my-topic-alert .sure')
+    $del_my_topic_alert_no.click(function () {
+        $del_my_topic_alert.hide()
+    })
+    $del_my_topic_alert_bg.click(function () {
+        $del_my_topic_alert.hide()
+    })
+
+    const $top_bar_topic = $('.top-bar .topic')
+    //我的话题点击 展示我的话题list
+    $top_bar_topic.click(function () {
+        $.ajax({
+            url: '/getMytopics',
+            type: 'get',
+            dataType: 'json'
+        })
+        .done(function (data) {
+            if(data.status === -1) {
+                window.alert('请先登录账号')
+                window.location.href = '/login'
+            }
+            else if(data.status === 500) {
+                window.alert('服务器繁忙，请稍后重试')
+            }
+            else if(data.status === 1) {
+                const $no_more = $('.topic-content .no-any-my-topic')
+                let $li = $('.topic-content li')
+                console.log($li)
+                //没有发表过任何话题
+                if(data.data.length === 0) {
+                    $no_more.show()
+                }
+                //发表过话题
+                else {
+                    $li.show()
+                    //对li标签进行增加或减少到我的话题的数量
+                    if($li.length < data.data.length) {
+                        for(let i=$li.length; i<data.data.length; i++) {
+                            $li.eq(0).after($li.eq(0).clone())
+                        }
+                    }
+                    else if($li.length > data.data.length) {
+                        for(let i=$li.length; i>data.data.length; i--) {
+                            $li.eq(i-1).remove()
+                        }
+                    }
+
+                    $li = $('.topic-content li')
+                    //将话题信息传入到对应的每个li标签内相应的位置
+                    for(let i=0; i<$li.length; i++) {
+                        $li.eq(i).children().eq(0).prop({'value': data.data[i]._id})
+                        //对标题进行切割
+                        let title_string = ''
+                        const $topic_content_title_width = $('.topic-content-title').outerWidth()
+                        for(let t of data.data[i].title) {
+                            if(18 * title_string.length <=  $topic_content_title_width - 90) {
+                                title_string += t
+                            }
+                            else {
+                                return title_string += '...'
+
+                            }
+                        }
+                        $li.eq(i).children().eq(1).children().eq(0).html(data.data[i].type).next().html(title_string)
+                        //对文章内容进行切割
+                        let content_string = ''
+                        for(let s of data.data[i].content) {
+                            if(14 * content_string.length <= 2 * $topic_content_title_width -60) {
+                                content_string += s
+                            }
+                            else {
+                                return content_string += '...'
+                            }
+                        }
+                        $li.eq(i).children().eq(2).html(content_string)
+                        $li.eq(i).children().eq(3).children().eq(0).html(data.data[i].publish_time).next().children().eq(1).html(data.data[i].comments_count)
+
+                        //监听话题的跳转点击
+                        $li.eq(i).children().eq(1).unbind('click')
+                        $li.eq(i).children().eq(2).unbind('click')
+                        $li.eq(i).children().eq(1).click(function () {
+                            window.open('/topicdetail?id=' + $(this).prev().prop('value'))
+                        })
+                        $li.eq(i).children().eq(2).click(function () {
+                            window.open('/topicdetail?id=' + $(this).prev().prev().prop('value'))
+                        })
+
+                        //监听话题文章删除按钮的点击
+                        const $del = $li.eq(i).children().eq(3).children().eq(2)
+
+                        $del.unbind('click')
+                        $del.click(function () {
+                            $del_my_topic_alert.show()
+                            $del_my_topic_alert_sure.unbind('click')
+                            $del_my_topic_alert_sure.click(function () {
+                                const $formdata = 'id=' + $li.eq(i).children().eq(0).prop('value')
+                                $.ajax({
+                                    url: '/delMytopics',
+                                    type: 'get',
+                                    dataType: 'json',
+                                    data: $formdata
+                                })
+                                .done(function (data) {
+                                    if(data.status === -1) {
+                                        window.alert('未登录账号，请先进行登录')
+                                        window.location.href = '/login'
+                                    }
+                                    else if(data.status === 500) {
+                                        window.alert('服务器繁忙，请稍后重试')
+                                    }
+                                    else if(data.status === 1) {
+                                        window.alert('话题删除成功')
+                                        $del_my_topic_alert.hide()
+                                        $li.eq(i).remove()
+                                    }
+                                })
+                            })
+                        })
+                    }
+                }
+            }
+        })
+    })
+
+    /* --------------------------------------------------------------------  */
 
 
 

@@ -75,7 +75,7 @@ module.exports = mongoose.model('User', userScheme)
 
 // user =  mongoose.model('User', userScheme)
 // user.find({
-//     name: '333'
+//     name: 'Lpyexplore'
 // }, (err, data) => {
 //     if(err) {
 //         console.log('查询失败')
@@ -90,11 +90,11 @@ module.exports = mongoose.model('User', userScheme)
 
 
 
-// user.update({
-//     name: '111'
+// user.findOneAndUpdate({
+//     email: '1316219891@qq.com'
 // },{
 //     $set: {
-//         collections: yy
+//         name: '测试管理员'
 //     }
 // }, {}, (err, data) => {
 //     console.log(data)

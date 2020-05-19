@@ -326,6 +326,7 @@ body{
     bottom: 0;
     left: 0;
     right: 0;
+    display: none;
 }
 .new-dir-alert .bg{
     background: #000;
@@ -395,6 +396,7 @@ body{
     bottom: 0;
     left: 0;
     right: 0;
+    display: none;
 }
 
 .has-del-dir .box{
@@ -459,11 +461,6 @@ body{
 
 
 
-
-
-
-
-
 .has-del-dir-btn{
     width: 100%;
     height: 15%;
@@ -486,4 +483,200 @@ body{
     font-weight: 600;
     cursor: pointer;
 
+}
+
+
+.del-my-topic-alert{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: none;
+}
+
+.del-my-topic-alert .box{
+    width: 400px;
+    height: 250px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -70%);
+    background: #fff;
+    z-index: 10;
+    border-radius: 5px;
+}
+
+.del-my-topic-alert .bg{
+    background: #000;
+    opacity: .2;
+    width: 100%;
+    height: 100%;
+}
+
+.del-my-topic-alert-title{
+    width: 100%;
+    height: 20%;
+    border-bottom: 1px solid #e0e0e0;
+    color: #000;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+}
+
+.del-my-topic-alert-content{
+    width: 100%;
+    height: 65%;
+    padding: 20px 15px;
+}
+
+.del-my-topic-alert-content div{
+    width: 100%;
+    display: flex;
+    height: 50%;
+
+}
+.del-my-topic-alert-content .info span:nth-child(1){
+    display: inline-block;
+    width: 15%;
+    color: red;
+}
+.del-my-topic-alert-content .info span:nth-child(2){
+    display: inline-block;
+    width: 85%;
+}
+.del-my-topic-alert-content .remind{
+    color: red;
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.del-my-topic-alert-btn{
+    width: 100%;
+    height: 15%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.del-my-topic-alert .no{
+    font-size: 14px;
+    color: #4d4d4d;
+    margin-left: 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.del-my-topic-alert .sure{
+    font-size: 14px;
+    color: #ca0c16;
+    margin-right: 15px;
+    margin-left: 20px;
+    font-weight: 600;
+    cursor: pointer;
+
+}
+
+
+
+.topic-content{
+    display: inline-block;
+    min-height: 900px;
+    width: 100%;
+}
+.topic-content ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: inline-block;
+}
+.topic-content ul li{
+    width: 100%;
+    height: 125px;
+    border-bottom: 1px solid #f0f2f5;
+    padding: 16px 24px 12px 24px;
+    display: none;
+}
+.topic-content ul li:hover{
+    background: rgb(249, 250, 252);
+}
+.topic-content ul li:hover .topic-content-title-title{
+    color: #5094d5;
+}
+.topic-content ul li:hover .topic-content-infos-del-btn{
+    display: inline-block;
+}
+.topic-content .topic-content-title{
+    width: 100%;
+    display: inline-block;
+}
+.topic-content-infos{
+    position: relative;
+}
+.topic-content .topic-content-title .topic-content-type{
+    font-size: 12px;
+    color: #fff;
+    font-weight: 600;
+    background: #80bd01;
+    border-radius: 3px;
+    padding: 2px 3px;
+}
+.topic-content .topic-content-title .topic-content-title-title{
+    font-size: 18px;
+    font-weight: 500;
+    color: #222226;
+    margin-left: 5px;
+}
+.topic-content .topic-content-content{
+    display: inline-block;
+    width: 100%;
+    min-height: 34px;
+    max-height: 48px;
+    padding: 10px 0;
+    color: #999aaa;
+    font-size: 14px;
+}
+.topic-content-title, .topic-content-content{
+    cursor: pointer;
+}
+.topic-content-infos-pubTime, .topic-content-infos-comments-count, .topic-content-infos-del-btn{
+    display: inline-block;
+}
+.topic-content-infos-pubTime{
+    color: #5f6471;
+    font-size: 15px;
+    margin-right: 20px;
+}
+.topic-content-infos-comments-count .comments-logo, .topic-content-infos-comments-count .comments-count{
+    display: inline-block;
+}
+.topic-content-infos-comments-count .comments-logo{
+    height: 15px;
+    width: 15px;
+}
+.topic-content-infos-comments-count .comments-count {
+    color: #5f6471;
+}
+.topic-content-infos-del-btn{
+    position: absolute;
+    right: 10px;
+    cursor: pointer;
+    color: #e33e33;
+    font-size: 15px;
+    display: none;
+}
+.topic-content .no-any-my-topic{
+    display: none;
+    width: 100%;
+    font-size: 30px;
+    margin: 50px 0;
+    text-align: center;
+    color: #b1b1b1;
 }
