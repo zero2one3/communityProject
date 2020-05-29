@@ -9,4 +9,4 @@ function escapeHTML(str) {
             .replace(/\//g, '&#x2F;')
 }
 
-module.export = escapeHTML
+module.exports = escapeHTML
