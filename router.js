@@ -4,6 +4,7 @@ const md5 = require('blueimp-md5')
 const moment = require('moment')
 const RandomCode = require('./tools/RandomCode')
 const sendEmail = require('./tools/nodemailer')
+const escapeHTML = require('./tools/escapeHTML')
 const router = express.Router()
 
 //导入数据模型user
@@ -108,6 +109,11 @@ router.post('/register', (req, res) => {
     4. 注册成功，返回给客户端交互
     * */
     const body = req.body
+    let judgeName = body.name.match(/(([\u4e00-\u9fa5])*|\w*)+/)
+    //判断昵称是否为非法字符
+    if(judgeName[0] !== judgeName.input) {
+        res.send('别想攻击我的网站')
+    }
     //密码加密
     body.psd = md5(md5(body.psd))
     //验证码加密
@@ -235,6 +241,7 @@ router.post('/account', (req, res) => {
     1. 获取用户提交的账号验证post请求数据
     2. 判断服务器是否错误  =>  判断账号是否存在  =>   加密验证码后，判断验证码是否正确   =>   验证成功返回给客户端交互
     * */
+    let body = req.body
     user.findOne({
         email: body.email
     }, (err, data) => {
@@ -330,8 +337,8 @@ router.post('/topic', (req, res) => {
     * */
     let body = req.body
     new topic({
-        title:  body.title,
-        content: body.content,
+        title:  escapeHTML(body.title),
+        content: escapeHTML(body.content),
         type: body.type,
         author_name: req.session.user.name,
         author_email: req.session.user.email,
@@ -1001,6 +1008,7 @@ router.get('/editUserInfo', (req, res) => {
     4. 找到该用户数据并更新，同时更新  last_modifyTime
     5. 返回给客户端交互
     * */
+
 
     //判断是否登录
     if(!req.session.user) {

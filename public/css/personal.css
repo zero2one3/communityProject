@@ -102,6 +102,10 @@ body{
     height: 200px;
     resize: none;
 }
+.info-content .remind-text{
+    font-size: 14px;
+    color: #d1d1d1;
+}
 .info-content .edit-btn{
     width: 200px;
     margin: 20px auto;

@@ -1,5 +1,15 @@
 
 $(function () {
+    function escapeHTML(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quto;')
+            .replace(/'/g, '&#x27;')
+            .replace(/`/g, '&#96;')
+            .replace(/\//g, '&#x2F;')
+    }
     /* -------------------------  个人中心的导航栏js  -----------------------  */
     const $each_bar = $('.top-bar span')
     const $content = $('.content').children()
@@ -79,9 +89,17 @@ $(function () {
     //监听提交修改个人信息按钮的点击
     $edit_btn.click(function () {
         const $name = $('.info-content #name')
+        //判断昵称格式
+        let namejudge = $name.val().match(/(([\u4e00-\u9fa5])*|\w*)+/)
+        if(namejudge[1] !== namejudge.input) {
+            return alert('昵称格式错误，请重新输入，昵称由中文字符、数字、字母组成，长度不能超过11')
+        }
+        else if($name.length > 11) {
+            return alert('昵称最大长度不能超过11，请重新输入')
+        }
         const $gender = $('.info-content #gender')
         const $introduce = $('.info-content #introduce')
-        const $formdata = 'name=' + $name.prop('value') + '&gender=' + $gender.prop('value') + '&introduce=' + $introduce.prop('value')
+        const $formdata = 'name=' + $name.prop('value') + '&gender=' + $gender.prop('value') + '&introduce=' + escapeHTML($introduce.prop('value'))
 
         $.ajax({
             url: '/editUserInfo',
@@ -195,10 +213,10 @@ $(function () {
                                         else {
                                             content_string += '...'
 
-                                            return $(this).children().eq(1).children().eq(1).html(content_string)
+                                            return $(this).children().eq(1).children().eq(1).html(escapeHTML(content_string))
                                         }
                                     }
-                                    $(this).children().eq(1).children().eq(1).html(content_string)
+                                    $(this).children().eq(1).children().eq(1).html(escapeHTML(content_string))
                                     //对标题进行切割
                                     let title_string = ''
                                     for(let t of data.TopicsInfo[i].title) {
@@ -208,10 +226,10 @@ $(function () {
                                         else {
                                             title_string += '...'
 
-                                            return $(this).children().eq(0).children().eq(1).children().html(title_string).prop({'href': '/topicdetail?id=' + data.TopicsInfo[i]._id, target: "_blank"})
+                                            return $(this).children().eq(0).children().eq(1).children().html(escapeHTML(title_string)).prop({'href': '/topicdetail?id=' + data.TopicsInfo[i]._id, target: "_blank"})
                                         }
                                     }
-                                    $(this).children().eq(0).children().eq(1).children().html(title_string).prop({'href': '/topicdetail?id=' + data.TopicsInfo[i]._id, target: "_blank"})
+                                    $(this).children().eq(0).children().eq(1).children().html(escapeHTML(title_string)).prop({'href': '/topicdetail?id=' + data.TopicsInfo[i]._id, target: "_blank"})
 
                                 })
 
@@ -330,10 +348,10 @@ $(function () {
                                         else {
                                             content_string += '...'
 
-                                            return $(this).children().eq(1).children().eq(1).html(content_string)
+                                            return $(this).children().eq(1).children().eq(1).html(escapeHTML(content_string))
                                         }
                                     }
-                                    $(this).children().eq(1).children().eq(1).html(content_string)
+                                    $(this).children().eq(1).children().eq(1).html(escapeHTML(content_string))
                                     //对标题进行切割
                                     let title_string = ''
                                     for(let t of data.TopicsInfo[i].title) {
@@ -343,10 +361,10 @@ $(function () {
                                         else {
                                             title_string += '...'
 
-                                            return $(this).children().eq(0).children().eq(1).children().html(title_string).prop({'href': '/topicdetail?id=' + data.TopicsInfo[i]._id, target: "_blank"})
+                                            return $(this).children().eq(0).children().eq(1).children().html(escapeHTML(title_string)).prop({'href': '/topicdetail?id=' + data.TopicsInfo[i]._id, target: "_blank"})
                                         }
                                     }
-                                    $(this).children().eq(0).children().eq(1).children().html(title_string).prop({'href': '/topicdetail?id=' + data.TopicsInfo[i]._id, target: "_blank"})
+                                    $(this).children().eq(0).children().eq(1).children().html(escapeHTML(title_string)).prop({'href': '/topicdetail?id=' + data.TopicsInfo[i]._id, target: "_blank"})
 
                                 })
 

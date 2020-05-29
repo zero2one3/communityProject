@@ -1,0 +1,60 @@
+
+body{
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+}
+.search-box{
+    height: 10%;
+    border-bottom: 2px solid #eee;
+
+}
+.result-box{
+    height: 90%;
+}
+form{
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+.form-group{
+    height: 100%;
+    width: 20%;
+    float: left;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding-left: 10px;
+}
+.type label, .way label{
+    float: left;
+    width: 35%;
+    text-align: left;
+}
+.type select, .way select{
+    float: left;
+    width: 65%;
+}
+.name label, .email label{
+    width: 15%;
+}
+.name input, .email input{
+    width: 85%;
+}
+.id label{
+    width: 10%;
+}
+.id input{
+    width: 90%;
+}
+.searchBtn button{
+    width: 50%;
+}
+.next-page, .prev-page{
+    width: 10%;
+    position: relative;
+    right: 0;
+}
+
+

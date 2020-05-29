@@ -7,77 +7,7 @@
 
 
 {{ block 'style' }}
-<style>
-    .content-container{
-        width: 1350px;
-        margin: 17px auto;
-        height: 100vh;
-        border-radius: 10px;
-    }
-    .content-container .content-l{
-        width: 73.5%;
-        height: 100%;
-        background: #fff;
-        float: left;
-        border-radius: 7px;
-    }
-    .content-container .content-r{
-        width: 25%;
-        height: 100%;
-        background: #fff;
-        float: right;
-        border-radius: 7px;
-    }
-    .content-l .top-bar{
-        width: 100%;
-        height: 7%;
-        background: #f6f6f6;
-        display: flex;
-        align-items: center;
-        border-radius: 7px;
-    }
-    .content-l .top-bar span{
-        margin-left: 10px;
-    }
-    .content-l .top-bar span:nth-child(1) a{
-        color: #80bd01;
-    }
-    .content-l .top-bar span:nth-child(2){
-        font-size: 18px;
-        color: #999999;
-    }
-    .content-l .top-bar span:nth-child(3){
-        color: #999999;
-    }
-    form{
-        height: 100%;
-    }
-    form .select-type{
-        width: 100%;
-        height: 34px;
-        padding-top: 30px;
-        display: flex;
-        align-items: center;
-    }
-    .select-type label{
-        float: left;
-    }
-    .select-type select{
-        width: 20%;
-        margin-left: 20px;
-    }
-    .form-group{
-        padding: 5px 15px;
-    }
-    .textarea{
-        height: 65%;
-    }
-    textarea{
-        width: 100%;
-        height: 100%;
-        resize: none;
-    }
-</style>
+<link rel="stylesheet" href="public/css/topic.css">
 {{ /block }}
 
 
@@ -121,42 +51,5 @@
 
 {{ block 'script' }}
 
-<script>
-    $(function () {
-        const $submit = $('.submit')
-        $submit.click(function (e) {
-            e.preventDefault()
-            const $title = $('#title')[0].value
-            const $content = $('#content')[0].value
-            const $type = $('#type')[0].value
-            if(!$type){
-                return window.alert('请选择文章类型')
-            }
-            else if(!$title) {
-                return window.alert('请填写标题')
-            }
-            else if(!$content) {
-                return window.alert('请填写正文内容')
-            }
-            else {
-                const $formdata =  'type=' + $type + '&title=' + $title + '&content=' + $content
-                $.ajax({
-                    url: '/topic',
-                    type: 'post',
-                    dataType: 'json',
-                    data: $formdata,
-                    success: function (data) {
-                        if(data.status === 500) {
-                            return window.alert('服务器繁忙，请稍后重试')
-                        }
-                        else if(data.status === 1) {
-                            window.alert('话题发表成功')
-                            window.location.href = '/'
-                        }
-                    }
-                })
-            }
-        })
-    })
-</script>
+<script src="public/js/topic.js"></script>
 {{ /block }}

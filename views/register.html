@@ -5,79 +5,7 @@
     <title>注册</title>
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
     <script src="/node_modules/jquery/dist/jquery.js"></script>
-    <style>
-        body{
-            padding: 0;
-            margin: 0;
-            height: 100vh;
-            width: 100vw;
-            background: #f8f8f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .login-box{
-            width: 27%;
-            height: 70%;
-            position: relative;
-        }
-        .title{
-            height: 13%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .title span{
-            font-size: 30px;
-        }
-        .login{
-            height: 70%;
-            border-radius: 7px;
-            border: 1.4px solid #e1e1e1;
-            padding: 20px;
-            background: #fff;
-        }
-        form{
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        form .btn{
-            width: 100%;
-        }
-        .register{
-            width: 100%;
-            height: 12%;
-            position: absolute;
-            bottom: 0;
-            border: 1.4px solid #e1e1e1;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            padding-left: 10px;
-        }
-        .register a{
-            margin-left: 5px;
-        }
-        .register .gotohome{
-            position: absolute;
-            right: 0;
-            margin-right: 10px;
-        }
-        .code-from{
-            display: flex;
-            align-items: center;
-        }
-
-        .code-from input{
-            width: 62%;
-        }
-        .code-from button{
-            width: 36%;
-            margin-left: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="public/css/register.css">
 </head>
 <body>
 <div class="login-box">
@@ -94,6 +22,7 @@
             </div>
             <div class="form-group">
                 <label for="NickName">昵称</label>
+                <label class="remind">昵称由中文字符、数字、字母组成，长度不能超过11</label>
                 <input type="text" class="form-control" id="NickName" placeholder="Name" name="name">
             </div>
             <div class="form-group">
@@ -102,7 +31,7 @@
             </div>
             <div class="form-group code-from">
 
-                <input type="text" class="form-control" placeholder="Code" name="code">
+                <input type="text" class="form-control" placeholder="Code" name="code" id="code">
                 <button type="button" class="btn btn-success code-btn">发送验证码</button>
             </div>
 
@@ -117,87 +46,7 @@
     </div>
 
 
-    <script>
-        $(function () {
-            let $code = ''
-            const $form = $('#register')
-            //处理表单提交事件
-            $form.on('submit', function(event) {
-                //阻止表单提交默认行为
-                event.preventDefault()
-                //获取post表单数据
-                const $formdata = $(this).serialize()
-                console.log($formdata)
-                //发送ajax请求
-                $.ajax({
-                    url: '/register',
-                    type: 'post',
-                    dataType: 'json',
-                    data: $formdata+'&serverCode='+$code,
-                    success: function (data) {
-                        if(data.status === 0) {
-                            window.alert('用户名或邮箱已存在')
-                        }
-                        else if(data.status === 500) {
-                            window.alert('服务器繁忙，请稍后重试')
-                        }
-                        else if(data.status === -1){
-                            window.alert('验证码输入错误')
-                        }
-                        else if(data.status === 1) {
-                            window.alert('注册成功！')
-                            window.location.href = '/'
-                        }
-
-                    }
-                })
-
-            })
-
-
-            //处理发送验证码事件
-            const $codeBtn = $('.code-btn')
-            $codeBtn.click(function () {
-                const $email = $('#exampleInputEmail1')[0].value
-                if(!$email) { return window.alert('请输入电子邮箱') }
-                $.ajax({
-                    url: '/sendemail',
-                    dataType: 'json',
-                    type: 'get',
-                    data: {email: $email},
-                    success: function (data) {
-                        if(data.status === 0) {
-                            window.alert('验证码发送失败，该邮箱不存在')
-                        }
-                        else if(data.status === -1){
-                            window.alert('验证码发送失败，服务器繁忙，请稍后重试')
-                        }
-                        else if(data.status === 1) {
-                            window.alert('验证码发送成功，请尽快填写')
-                            $code = data.code
-
-                            $codeBtn.attr('disabled','disabled')
-                            let totalTimer = setTimeout(() => {
-                                $codeBtn.removeAttr('disabled')
-                                $codeBtn.html('发送验证码')
-                            },60000)
-                            let countDown = 60
-                            let eachTimer = setInterval(() => {
-                                countDown --
-                                if(countDown > 0) {
-                                    $codeBtn.html(countDown + '秒后可再次发送')
-                                }
-                                else {
-                                    clearInterval(eachTimer)
-                                    clearTimeout(totalTimer)
-                                }
-                            }, 1000)
-                        }
-                    }
-                })
-            })
-        })
-    </script>
+    <script src="public/js/register.js"></script>
 </div>
 </body>
 </html>

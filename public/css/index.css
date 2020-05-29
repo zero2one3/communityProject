@@ -1,0 +1,177 @@
+
+    /*谷歌*/
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+/*火狐*/
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+.content-container{
+    width: 1350px;
+    margin: 17px auto;
+    height: 1200px;
+    background: #fff;
+    border-radius: 10px;
+}
+.content-container .items{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.pages{
+    width: 100%;
+    height: 5%;
+    position: absolute;
+    bottom: 0;
+}
+.content-container .items .item{
+    height: 5%;
+    border-bottom: 1px solid #e1e1e1;
+    display: flex;
+    align-items: center;
+}
+.content-container .items .item:hover{
+    background: #f6f6f6;
+}
+.item .each{
+    display: inline-block;
+    height: 60%;
+}
+.item .author{
+    margin-left: 20px;
+    font-size: 16px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    width: 8%;
+}
+.item .author a{
+    color: #778087;
+    text-decoration: none;
+}
+.item .like{
+    width: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.item .like img{
+    height: 40%;
+}
+.item .like span{
+    margin-left: 5px;
+    display: flex;
+    font-size: 12px;
+    align-items: flex-end;
+}
+.item .type{
+    width: 3%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.item .type span{
+    display: inline-block;
+    height: 58%;
+    background: #80bd01;
+    padding: 0 3px;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 400;
+}
+.item .title{
+    width: 70%;
+    margin-left: 2px;
+    display: flex;
+    align-items: center;
+}
+.item .title span{
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 18px;
+}
+.item .title span a{
+    color: #333;
+}
+.item .pub-time{
+    width: 10%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    float: right;
+}
+.pages .pagination{
+    height: 40px;
+    margin: 10px 0 10px;
+    width: 40%;
+    float: left;
+}
+.pagination ul{
+    list-style: none;
+    height: 100%;
+}
+.pagination li{
+    height: 100%;
+    float: left;
+    width: 40px;
+    text-align: center;
+    line-height: 40px;
+    border: 1px solid #b69999;
+    cursor: pointer;
+    margin-right: 5px;
+}
+.pagination li:hover{
+    border: 1px solid #3e89fa;
+}
+.pagination li:hover a{
+    color: #3e89fa;
+
+}
+.pagination li a{
+    display: inline-block;
+    color: #333;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+}
+.pagination .active{
+    border: 0;
+}
+.nomore{
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.nomore span{
+    font-size: 30px;
+}
+.jumppage{
+    height: 40px;
+    margin: 10px 0 10px;
+    width: 40%;
+    float: left;
+    font-size: 16px;
+}
+.jumppage span, .jumppage input, .jumppage button{
+    float: left;
+    height: 40px;
+    line-height: 40px;
+}
+.jumppage button{
+    line-height: 0;
+    margin-left: 15px;
+}
+.jumppage input{
+    width: 50px;
+    height: 40px;
+    margin: 0 5px;
+}
+.jumppage span:nth-child(2){
+    margin-left: 15px;
+}
