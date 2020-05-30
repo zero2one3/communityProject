@@ -3,6 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const router = require('./router')
 const session = require('express-session')
+const cookieParser = require('cookie-parser')
 
 //创建服务器实例
 const app = express()
@@ -24,6 +25,9 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }))
+
+//配置cookie中间件
+app.use(cookieParser("LPY3EXPLORE333ww"))
 
 //挂载路由
 app.use(router)

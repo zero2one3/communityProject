@@ -79,6 +79,9 @@ router.post('/login', (req, res) => {
         } else if(data) {
             //登陆成功，发送给客户端session存储登陆成功的用户数据
             req.session.user = data
+            req.session.token = 'tok' + Date.now() + Math.random()*333
+            //登录成功，给用户设置一个带有token信息的cookie
+            res.cookie('rqtoken', md5(md5(req.session.token)), {maxAge: 24*60*60*1000})
             res.status(200).json({
                 status: 1,
                 message: 'login successfully'
@@ -185,6 +188,7 @@ router.get('/logout', (req, res) => {
     2. 重定向回首页
     * */
     req.session.user = null
+    req.session.token = null
     res.redirect('/')
 })
 
@@ -336,6 +340,28 @@ router.post('/topic', (req, res) => {
     2. 保存数据， 返回给客户端进行接下来的交互信息
     * */
     let body = req.body
+    //判断用户是否登陆re
+    if(!req.session) {
+        res.status(200).json({
+            status: -1,
+            message: '用户未登陆'
+        })
+    }
+    //判断token信息
+    if(body.t !== md5(md5(req.session.token))) {
+        res.status(404).json({
+            status: -3,
+            message: '不要恶意攻击'
+        })
+    }
+    //判断referer信息
+    //后台开发: http:\/\/localhost:3000
+    if(req.headers.referer.match(/http:\/\/106.54.233.135:5000/) ? false : true) {
+        res.status(404).json({
+            status: -3,
+            message: '不要恶意攻击'
+        })
+    }
     new topic({
         title:  escapeHTML(body.title),
         content: escapeHTML(body.content),
@@ -358,6 +384,8 @@ router.post('/topic', (req, res) => {
             })
         }
     })
+
+
 
 })
 
