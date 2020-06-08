@@ -199,11 +199,11 @@ router.get('/sendemail', (req, res) => {
     2. 再用自己封装的发送邮箱工具sendEmail 对用户的邮箱发送一个携带该生成的验证码的邮件
     3. 判断发送邮箱后返回的data，  为0，则邮件不存在；   为1，则发送成功，并把验证码加密后发给客户端，用于提交修改密码请求、注册时验证
     * */
+
     const code = RandomCode(6)
     let state = null
     sendEmail(req.query.email, code).then(data => {
         state = data
-
         if(state === 0){
             res.status(200).json({
                 //0表示邮件不存在

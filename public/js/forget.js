@@ -7,6 +7,7 @@ $(function () {
     let $code = null
     $codeBtn.click(function () {
         const $email = $('#exampleInputEmail1')[0].value
+
         if (!$email) {
             return window.alert('请输入电子邮箱')
         }
