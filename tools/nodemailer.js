@@ -7,7 +7,7 @@ let transporter = nodemailer.createTransport({
     secure: true,
     auth: {
         user: '1316219891@qq.com',
-        pass: 'avylcrelkrbyjcdg' //授权码,非邮箱登录密码
+        pass: 'xxxxxxxxxxxxxxxxxxx' //授权码,非邮箱登录密码，这里我就不提供了，大家自行获取
     }
 });
 
